@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canopy — Discover the work you were made to do</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brown:#1A0F0A;--brown-mid:#3D2416;--brown-soft:#6B3F28;
+  --amber:#C9852A;--amber-bright:#F5C842;--amber-light:#E8A84A;
+  --cream:#F5ECD7;--cream-dark:#EDE0C4;--cream-mid:#C9B48A;--cream-faint:#FDF8F0;
+  --green:#40916C;--green-dark:#2D6A4F;--green-light:#52B788;
+  --muted:#8B6B4A;--border:#D9C9A8;--border-light:#EDE0C4;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--brown);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden;}
+.screen{display:none;}
+.screen.active{display:flex;flex-direction:column;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+
+/* ── SHARED MARK SVG ── */
+.mark{display:inline-flex;align-items:center;gap:10px;cursor:pointer;}
+.mark-word{font-family:'Playfair Display',serif;font-weight:500;letter-spacing:0.1em;}
+
+/* ── GLOBAL NAV ── */
+.global-nav{background:var(--cream);border-bottom:1px solid var(--border-light);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.nav-links{display:flex;gap:32px;align-items:center;}
+.nav-link{font-size:13px;color:var(--muted);letter-spacing:0.04em;cursor:pointer;transition:color 0.2s;}
+.nav-link:hover,.nav-link.active{color:var(--brown);}
+.nav-cta{background:var(--amber);color:var(--brown);padding:9px 22px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.nav-cta:hover{background:var(--amber-light);}
+
+/* ── ANIMATIONS ── */
+@keyframes riseIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.rise{opacity:0;animation:riseIn 0.6s ease forwards;}
+.rise-1{animation-delay:0.1s;} .rise-2{animation-delay:0.25s;} .rise-3{animation-delay:0.4s;} .rise-4{animation-delay:0.55s;} .rise-5{animation-delay:0.7s;}
+
+/* ═══════════════════════════════════
+   LANDING PAGE
+═══════════════════════════════════ */
+#screen-landing{background:var(--brown);color:var(--cream);align-items:center;justify-content:center;padding:80px 24px;text-align:center;position:relative;overflow:hidden;}
+.land-glow{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(201,133,42,0.12) 0%,transparent 65%);pointer-events:none;}
+.land-inner{position:relative;z-index:1;max-width:640px;}
+.land-eyebrow{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--amber);margin-bottom:24px;}
+.land-title{font-family:'Playfair Display',serif;font-size:clamp(42px,7vw,76px);font-weight:400;line-height:1.04;color:var(--cream);margin-bottom:28px;}
+.land-title em{font-style:italic;color:var(--amber-light);}
+.land-body{font-size:17px;line-height:1.85;color:#B8A080;margin-bottom:52px;max-width:500px;margin-left:auto;margin-right:auto;}
+.btn-begin{display:inline-block;background:var(--amber);color:var(--brown);padding:18px 52px;border-radius:100px;font-size:14px;font-weight:500;letter-spacing:0.08em;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all 0.25s;}
+.btn-begin:hover{background:var(--amber-light);transform:translateY(-2px);box-shadow:0 12px 40px rgba(201,133,42,0.3);}
+.land-meta{margin-top:22px;font-size:12px;color:#5A3A1A;letter-spacing:0.05em;}
+.land-proof{display:flex;gap:48px;justify-content:center;margin-top:72px;padding-top:48px;border-top:1px solid rgba(255,255,255,0.06);}
+.proof-item{text-align:center;}
+.proof-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:var(--amber);display:block;}
+.proof-label{font-size:11px;color:#7A6040;letter-spacing:0.1em;text-transform:uppercase;margin-top:4px;}
+.land-how{padding:80px 24px;background:var(--cream-faint);}
+.land-how-inner{max-width:860px;margin:0 auto;}
+.land-how-title{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,42px);font-weight:400;text-align:center;margin-bottom:60px;}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;}
+.how-card{padding:32px;background:var(--cream);border:1px solid var(--border);border-radius:16px;}
+.how-num{font-family:'Playfair Display',serif;font-size:36px;color:var(--amber);line-height:1;margin-bottom:16px;display:block;}
+.how-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;margin-bottom:10px;}
+.how-body{font-size:14px;color:var(--muted);line-height:1.75;}
+.land-cta-strip{background:var(--brown);padding:80px 24px;text-align:center;color:var(--cream);}
+.land-cta-title{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:400;margin-bottom:16px;}
+.land-cta-title em{font-style:italic;color:var(--amber-light);}
+.land-cta-sub{font-size:15px;color:#B8A080;margin-bottom:36px;}
+
+/* ═══════════════════════════════════
+   ONBOARDING
+═══════════════════════════════════ */
+#screen-onboarding{background:var(--cream);align-items:center;justify-content:center;padding:80px 24px;}
+.onboard-wrap{max-width:480px;width:100%;animation:riseIn 0.5s ease forwards;}
+.onboard-logo{display:flex;align-items:center;gap:10px;margin-bottom:48px;cursor:pointer;}
+.onboard-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:400;margin-bottom:10px;}
+.onboard-sub{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:36px;}
+.field-label{display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;font-weight:500;}
+.field-input{width:100%;padding:15px 18px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:300;color:var(--brown);background:var(--cream-faint);outline:none;transition:border-color 0.2s;margin-bottom:20px;}
+.field-input:focus{border-color:var(--amber);}
+.field-input::placeholder{color:var(--border);}
+.btn-go{width:100%;padding:17px;background:var(--brown);color:var(--cream);border:none;border-radius:10px;font-size:14px;font-weight:500;letter-spacing:0.06em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;margin-top:4px;}
+.btn-go:hover{background:var(--brown-mid);transform:translateY(-1px);}
+.field-note{text-align:center;font-size:11px;color:var(--border);margin-top:14px;}
+
+/* ═══════════════════════════════════
+   ASSESSMENT — ONE AT A TIME
+═══════════════════════════════════ */
+#screen-assessment{background:var(--cream);}
+.assess-top{display:flex;align-items:center;justify-content:space-between;padding:18px 36px;position:fixed;top:0;left:0;right:0;z-index:10;background:var(--cream);border-bottom:1px solid rgba(217,201,168,0.4);}
+.assess-logo{display:flex;align-items:center;gap:9px;cursor:pointer;}
+.assess-logo-word{font-family:'Playfair Display',serif;font-size:16px;font-weight:500;letter-spacing:0.1em;color:var(--brown);}
+.prog-wrap{flex:1;max-width:300px;margin:0 28px;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.prog-dim{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);}
+.prog-track{width:100%;height:2px;background:var(--border);border-radius:1px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(to right,var(--amber),var(--amber-bright));border-radius:1px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);}
+.assess-qnum{font-size:12px;color:var(--muted);letter-spacing:0.04em;flex-shrink:0;}
+.q-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:120px 24px 80px;text-align:center;}
+.q-dim-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--cream-mid);margin-bottom:28px;opacity:0;transition:opacity 0.4s;}
+.q-stage.visible .q-dim-label{opacity:1;}
+.q-text-wrap{max-width:640px;width:100%;margin-bottom:60px;}
+.q-text{font-family:'Lora',serif;font-size:clamp(19px,3.2vw,27px);font-weight:400;color:var(--brown);line-height:1.6;opacity:0;transform:translateY(20px);transition:opacity 0.5s ease,transform 0.5s ease;}
+.q-stage.visible .q-text{opacity:1;transform:translateY(0);}
+.scale-wrap{display:flex;flex-direction:column;align-items:center;gap:18px;opacity:0;transform:translateY(14px);transition:opacity 0.5s ease 0.1s,transform 0.5s ease 0.1s;}
+.q-stage.visible .scale-wrap{opacity:1;transform:translateY(0);}
+.scale-btns{display:flex;gap:18px;align-items:center;}
+.scale-btn{width:52px;height:52px;border-radius:50%;border:2px solid var(--border);background:transparent;cursor:pointer;transition:all 0.2s;position:relative;display:flex;align-items:center;justify-content:center;}
+.scale-btn::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--cream-mid);transition:all 0.2s;}
+.scale-btn:hover{border-color:var(--amber);}
+.scale-btn:hover::after{background:var(--amber);transform:scale(1.3);}
+.scale-btn.selected{border-color:var(--amber);background:var(--brown);}
+.scale-btn.selected::after{background:var(--amber-bright);transform:scale(1.4);}
+.scale-labels{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:360px;padding:0 4px;}
+.scale-label{font-size:11px;color:var(--muted);letter-spacing:0.05em;text-align:center;max-width:110px;line-height:1.4;}
+.btn-back-q{position:fixed;bottom:32px;left:32px;background:none;border:1px solid var(--border);border-radius:100px;padding:10px 20px;font-size:13px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:none;}
+.btn-back-q.visible{display:block;}
+.btn-back-q:hover{border-color:var(--amber);color:var(--amber);}
+.sec-transition{position:fixed;inset:0;background:var(--brown);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;opacity:0;pointer-events:none;transition:opacity 0.4s ease;}
+.sec-transition.show{opacity:1;pointer-events:all;}
+.st-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;}
+.st-title{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,52px);font-weight:400;color:var(--cream);line-height:1.1;margin-bottom:16px;}
+.st-sub{font-size:15px;color:#B8A080;line-height:1.75;max-width:440px;}
+
+/* ═══════════════════════════════════
+   RESULTS PAGE — FULL DEEP DIVE
+═══════════════════════════════════ */
+#screen-results{background:var(--cream);align-items:center;padding:0;}
+.results-wrap{max-width:720px;width:100%;padding:80px 24px;}
+
+/* Hero results header */
+.res-hero{text-align:center;margin-bottom:64px;}
+.res-eyebrow{display:block;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;}
+.res-title{font-family:'Playfair Display',serif;font-size:clamp(38px,5.5vw,60px);font-weight:400;color:var(--brown);line-height:1.06;margin-bottom:16px;}
+.res-title em{font-style:italic;color:var(--amber);}
+.res-sub{font-size:15px;color:var(--muted);line-height:1.8;max-width:500px;margin:0 auto;}
+
+/* Top match revelation card */
+.top-card{background:var(--brown);border-radius:24px;padding:48px;margin-bottom:24px;position:relative;overflow:hidden;}
+.top-card::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,133,42,0.18) 0%,transparent 65%);pointer-events:none;}
+.top-card-badge{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber);background:rgba(201,133,42,0.1);border:1px solid rgba(201,133,42,0.22);padding:8px 16px;border-radius:100px;margin-bottom:28px;}
+.top-card-badge-dot{width:5px;height:5px;border-radius:50%;background:var(--green);}
+.top-card-name{font-family:'Playfair Display',serif;font-size:clamp(28px,4.5vw,44px);font-weight:400;color:var(--cream);line-height:1.1;margin-bottom:16px;}
+.top-card-match{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.top-card-pct{font-size:13px;color:var(--amber-light);flex-shrink:0;letter-spacing:0.04em;}
+.top-card-bar{flex:1;max-width:200px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+.top-card-bar-fill{height:100%;background:linear-gradient(to right,var(--amber),var(--amber-bright));border-radius:2px;}
+.top-card-desc{font-family:'Lora',serif;font-size:16px;color:#B8A080;line-height:1.9;margin-bottom:20px;}
+.top-card-why{font-size:13px;color:rgba(245,236,215,0.4);line-height:1.7;font-style:italic;}
+
+/* Self-portrait section */
+.portrait-card{background:var(--cream-faint);border:1.5px solid var(--border);border-radius:20px;padding:40px;margin-bottom:24px;}
+.card-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:var(--brown);margin-bottom:8px;}
+.card-sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.65;}
+.portrait-body{font-size:15px;color:var(--brown);line-height:1.9;font-family:'Lora',serif;}
+.portrait-body p{margin-bottom:16px;}
+.portrait-body p:last-child{margin-bottom:0;}
+
+/* Dimension bars */
+.dim-list{display:flex;flex-direction:column;gap:18px;}
+.dim-row{display:flex;align-items:center;gap:14px;}
+.dim-name{font-size:12px;color:var(--muted);letter-spacing:0.04em;width:148px;flex-shrink:0;}
+.dim-track{flex:1;height:7px;background:var(--cream-dark);border-radius:3px;overflow:hidden;}
+.dim-fill{height:100%;background:linear-gradient(to right,var(--amber),var(--amber-light));border-radius:3px;}
+.dim-score{font-size:12px;color:var(--amber);width:28px;text-align:right;flex-shrink:0;}
+
+/* Locked section */
+.locked-section{background:var(--cream-faint);border:1.5px solid var(--border);border-radius:20px;padding:40px;margin-bottom:24px;}
+.locked-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;filter:blur(5px);user-select:none;pointer-events:none;}
+.locked-item{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;background:var(--cream);border-radius:10px;border:1px solid var(--border);}
+.locked-item-left{display:flex;align-items:center;gap:12px;}
+.locked-rank{font-family:'Playfair Display',serif;font-size:20px;color:var(--cream-mid);width:22px;}
+.locked-name{font-family:'Lora',serif;font-size:14px;color:var(--brown);}
+.locked-pct{font-size:13px;color:var(--muted);}
+.unlock-area{text-align:center;}
+.unlock-price{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.unlock-price strong{color:var(--brown);font-weight:500;}
+.btn-unlock{width:100%;padding:17px;background:var(--amber);color:var(--brown);border:none;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.04em;transition:all 0.2s;}
+.btn-unlock:hover{background:var(--amber-light);transform:translateY(-1px);box-shadow:0 6px 28px rgba(201,133,42,0.28);}
+
+/* Insight blocks */
+.insight-block{background:var(--cream-faint);border:1.5px solid var(--border);border-radius:20px;padding:40px;margin-bottom:24px;}
+.insight-block p{font-size:14px;line-height:1.85;color:var(--brown);margin-bottom:12px;}
+.insight-block p:last-child{margin-bottom:0;}
+.insight-block em{color:var(--amber);font-style:normal;font-weight:500;}
+.insight-quote{border-left:3px solid var(--amber);padding-left:20px;margin:20px 0;font-family:'Lora',serif;font-size:15px;color:var(--brown-mid);line-height:1.8;font-style:italic;}
+
+/* Next steps strip inside results */
+.next-strip{background:var(--brown);border-radius:20px;padding:40px;text-align:center;margin-bottom:24px;}
+.next-strip-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);margin-bottom:10px;}
+.next-strip-sub{font-size:14px;color:#B8A080;margin-bottom:24px;line-height:1.7;}
+.btn-next-page{display:inline-block;background:var(--amber);color:var(--brown);padding:14px 36px;border-radius:100px;font-size:14px;font-weight:500;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-next-page:hover{background:var(--amber-light);}
+
+.results-restart{text-align:center;margin-top:12px;}
+.btn-restart{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:3px;}
+
+/* ═══════════════════════════════════
+   JOBS EXPLORER PAGE
+═══════════════════════════════════ */
+#screen-jobs{background:var(--cream);}
+.jobs-hero{background:var(--brown);padding:80px 40px;text-align:center;color:var(--cream);}
+.jobs-hero-title{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,58px);font-weight:400;line-height:1.08;margin-bottom:16px;}
+.jobs-hero-title em{font-style:italic;color:var(--amber-light);}
+.jobs-hero-sub{font-size:16px;color:#B8A080;max-width:500px;margin:0 auto;line-height:1.8;}
+.jobs-body{max-width:1100px;margin:0 auto;padding:64px 24px;}
+.cluster-nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:52px;justify-content:center;}
+.cluster-pill{padding:9px 20px;border:1.5px solid var(--border);border-radius:100px;font-size:13px;color:var(--muted);cursor:pointer;transition:all 0.2s;background:transparent;}
+.cluster-pill:hover,.cluster-pill.active{background:var(--brown);color:var(--cream);border-color:var(--brown);}
+.cluster-section{margin-bottom:64px;}
+.cluster-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:400;margin-bottom:8px;}
+.cluster-desc{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.7;max-width:600px;}
+.jobs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;}
+.job-card{background:var(--cream-faint);border:1.5px solid var(--border);border-radius:16px;padding:28px;transition:all 0.2s;cursor:pointer;}
+.job-card:hover{border-color:var(--amber);transform:translateY(-2px);box-shadow:0 8px 32px rgba(26,15,10,0.08);}
+.job-card-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;margin-bottom:8px;}
+.job-card-desc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:20px;}
+.job-card-meta{display:flex;flex-wrap:wrap;gap:8px;}
+.job-pill{font-size:11px;padding:4px 10px;border-radius:100px;letter-spacing:0.04em;}
+.pill-salary{background:rgba(64,145,108,0.1);color:var(--green-dark);}
+.pill-growth{background:rgba(201,133,42,0.1);color:var(--brown-soft);}
+.pill-type{background:rgba(26,15,10,0.06);color:var(--muted);}
+
+/* ═══════════════════════════════════
+   ABOUT PAGE
+═══════════════════════════════════ */
+#screen-about{background:var(--cream);}
+.about-hero{background:var(--brown);padding:100px 40px;color:var(--cream);position:relative;overflow:hidden;}
+.about-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,133,42,0.1) 0%,transparent 60%);pointer-events:none;}
+.about-hero-inner{max-width:700px;position:relative;z-index:1;}
+.about-hero-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;}
+.about-hero-title{font-family:'Playfair Display',serif;font-size:clamp(38px,5vw,60px);font-weight:400;line-height:1.08;margin-bottom:24px;}
+.about-hero-title em{font-style:italic;color:var(--amber-light);}
+.about-hero-body{font-size:16px;color:#B8A080;line-height:1.85;max-width:560px;}
+.about-body{max-width:820px;margin:0 auto;padding:80px 24px;}
+.about-section{margin-bottom:72px;}
+.about-section-label{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;display:block;}
+.about-section-title{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,38px);font-weight:400;margin-bottom:20px;line-height:1.15;}
+.about-section-body{font-size:15px;color:var(--brown);line-height:1.9;}
+.about-section-body p{margin-bottom:18px;}
+.about-section-body p:last-child{margin-bottom:0;}
+.about-values{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:32px;}
+.about-value-card{background:var(--cream-faint);border:1px solid var(--border);border-radius:14px;padding:28px;}
+.about-value-num{font-family:'Playfair Display',serif;font-size:28px;color:var(--amber);margin-bottom:12px;display:block;}
+.about-value-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;margin-bottom:8px;}
+.about-value-body{font-size:13px;color:var(--muted);line-height:1.7;}
+.founder-block{display:grid;grid-template-columns:200px 1fr;gap:40px;align-items:start;background:var(--cream-faint);border:1.5px solid var(--border);border-radius:20px;padding:40px;}
+.founder-avatar{width:200px;height:200px;border-radius:16px;background:var(--brown);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.founder-initials{font-family:'Playfair Display',serif;font-size:48px;color:var(--amber);}
+.founder-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;margin-bottom:4px;}
+.founder-role{font-size:13px;color:var(--amber);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:20px;}
+.founder-bio{font-size:14px;color:var(--brown);line-height:1.85;}
+.founder-bio p{margin-bottom:14px;}
+.founder-bio p:last-child{margin-bottom:0;}
+
+/* ═══════════════════════════════════
+   NEXT STEPS PAGE
+═══════════════════════════════════ */
+#screen-nextsteps{background:var(--cream);}
+.nextsteps-hero{background:var(--brown);padding:80px 40px;text-align:center;color:var(--cream);}
+.nextsteps-hero-title{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,56px);font-weight:400;line-height:1.08;margin-bottom:16px;}
+.nextsteps-hero-title em{font-style:italic;color:var(--amber-light);}
+.nextsteps-hero-sub{font-size:16px;color:#B8A080;max-width:520px;margin:0 auto;line-height:1.8;}
+.nextsteps-body{max-width:900px;margin:0 auto;padding:72px 24px;}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:72px;}
+.step-card{background:var(--cream-faint);border:1.5px solid var(--border);border-radius:18px;padding:32px;}
+.step-num{font-family:'Playfair Display',serif;font-size:40px;color:var(--amber);line-height:1;margin-bottom:16px;display:block;}
+.step-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:400;margin-bottom:10px;}
+.step-body{font-size:13px;color:var(--muted);line-height:1.75;}
+.step-actions{margin-top:16px;}
+.step-action{display:block;font-size:13px;color:var(--brown);padding:10px 0;border-bottom:1px solid var(--border-light);cursor:pointer;}
+.step-action:last-child{border-bottom:none;}
+.step-action:hover{color:var(--amber);}
+.resource-section{margin-bottom:52px;}
+.resource-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;margin-bottom:8px;}
+.resource-sub{font-size:14px;color:var(--muted);margin-bottom:24px;}
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.resource-card{background:var(--cream-faint);border:1px solid var(--border);border-radius:12px;padding:22px;}
+.resource-card-title{font-size:15px;font-weight:500;margin-bottom:6px;}
+.resource-card-desc{font-size:13px;color:var(--muted);line-height:1.65;}
+.resource-card-link{font-size:12px;color:var(--amber);margin-top:12px;display:block;letter-spacing:0.04em;}
+.faq-list{display:flex;flex-direction:column;gap:2px;}
+.faq-item{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px;}
+.faq-q{padding:18px 22px;font-size:14px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--cream-faint);}
+.faq-q:hover{background:var(--cream-dark);}
+.faq-arrow{font-size:16px;color:var(--amber);transition:transform 0.2s;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);}
+.faq-a{padding:0 22px;max-height:0;overflow:hidden;transition:all 0.3s;font-size:13px;color:var(--muted);line-height:1.75;background:var(--cream-faint);}
+.faq-item.open .faq-a{padding:4px 22px 18px;max-height:300px;}
+
+/* ═══════════════════════════════════
+   FOOTER
+═══════════════════════════════════ */
+.site-footer{background:var(--brown);color:var(--cream);padding:48px 40px;margin-top:auto;}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;}
+.footer-logo{display:flex;align-items:center;gap:10px;}
+.footer-logo-word{font-family:'Playfair Display',serif;font-size:18px;letter-spacing:0.1em;color:var(--cream);}
+.footer-tagline{font-size:12px;color:#6A5030;margin-top:4px;}
+.footer-links{display:flex;gap:28px;flex-wrap:wrap;}
+.footer-link{font-size:13px;color:#7A6040;cursor:pointer;transition:color 0.2s;}
+.footer-link:hover{color:var(--cream);}
+.footer-copy{font-size:11px;color:#4A3020;letter-spacing:0.04em;}
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════ */
+@media(max-width:768px){
+  .global-nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .how-grid,.about-values,.steps-grid{grid-template-columns:1fr;}
+  .founder-block{grid-template-columns:1fr;}
+  .founder-avatar{width:100px;height:100px;}
+  .founder-initials{font-size:28px;}
+  .jobs-body,.about-body,.nextsteps-body{padding:40px 16px;}
+  .top-card{padding:28px;}
+  .assess-top{padding:14px 16px;}
+  .prog-wrap{max-width:160px;}
+  .scale-btn{width:44px;height:44px;}
+  .scale-btns{gap:12px;}
+  .land-proof{gap:28px;flex-wrap:wrap;}
+  .land-how{padding:52px 16px;}
+  .how-grid{gap:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     GLOBAL NAV (hidden on assessment)
+═══════════════════════════════════ -->
+<nav class="global-nav" id="global-nav">
+  <div class="mark" onclick="navigate('landing')">
+    <svg width="24" height="28" viewBox="0 0 64 72" fill="none"><circle cx="32" cy="36" r="10" fill="#C9852A"/><circle cx="32" cy="36" r="5.5" fill="#F5C842"/><line x1="32" y1="36" x2="32" y2="66" stroke="#1A0F0A" stroke-width="4.5" stroke-linecap="round"/><line x1="32" y1="36" x2="30" y2="6" stroke="#1A0F0A" stroke-width="4" stroke-linecap="round"/><line x1="31" y1="20" x2="16" y2="6" stroke="#1A0F0A" stroke-width="2.5" stroke-linecap="round"/><line x1="31" y1="20" x2="44" y2="8" stroke="#1A0F0A" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="36" x2="4" y2="23" stroke="#1A0F0A" stroke-width="3.5" stroke-linecap="round"/><line x1="17" y1="30" x2="6" y2="18" stroke="#1A0F0A" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="36" x2="58" y2="25" stroke="#1A0F0A" stroke-width="3" stroke-linecap="round"/><line x1="46" y1="30" x2="58" y2="18" stroke="#1A0F0A" stroke-width="1.8" stroke-linecap="round"/><line x1="32" y1="36" x2="10" y2="46" stroke="#1A0F0A" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="30" cy="3" rx="6" ry="4" fill="#40916C" transform="rotate(-5,30,3)"/><ellipse cx="14" cy="3" rx="5" ry="3.5" fill="#2D6A4F" transform="rotate(18,14,3)"/><ellipse cx="46" cy="5" rx="4.5" ry="3" fill="#52B788" transform="rotate(-14,46,5)"/><ellipse cx="4" cy="15" rx="5" ry="3.5" fill="#40916C" transform="rotate(30,4,15)"/><ellipse cx="60" cy="16" rx="4.5" ry="3" fill="#2D6A4F" transform="rotate(-28,60,16)"/><ellipse cx="8" cy="44" rx="4.5" ry="3" fill="#40916C" transform="rotate(44,8,44)"/></svg>
+    <span class="mark-word" style="font-size:18px;color:var(--brown);">Canopy</span>
+  </div>
+  <div class="nav-links">
+    <span class="nav-link" onclick="navigate('jobs')">Explore Careers</span>
+    <span class="nav-link" onclick="navigate('nextsteps')">Next Steps</span>
+    <span class="nav-link" onclick="navigate('about')">About</span>
+  </div>
+  <button class="nav-cta" onclick="navigate('onboarding')">Begin Assessment</button>
+</nav>
+
+<!-- ═══════════════════════════════════
+     LANDING
+═══════════════════════════════════ -->
+<section id="screen-landing" class="screen active">
+  <div style="flex:1;display:flex;flex-direction:column;">
+  <div class="land-glow"></div>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:80px 24px;background:var(--brown);position:relative;">
+    <div class="land-inner">
+      <div style="margin:0 auto 44px;">
+        <svg width="64" height="72" viewBox="0 0 64 72" fill="none" style="display:block;margin:0 auto;"><circle cx="32" cy="36" r="10" fill="#C9852A"/><circle cx="32" cy="36" r="5.5" fill="#F5C842"/><line x1="32" y1="36" x2="32" y2="66" stroke="#F5ECD7" stroke-width="4.5" stroke-linecap="round"/><line x1="32" y1="36" x2="30" y2="6" stroke="#F5ECD7" stroke-width="4" stroke-linecap="round"/><line x1="31" y1="20" x2="16" y2="6" stroke="#F5ECD7" stroke-width="2.5" stroke-linecap="round"/><line x1="31" y1="20" x2="44" y2="8" stroke="#F5ECD7" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="36" x2="4" y2="23" stroke="#F5ECD7" stroke-width="3.5" stroke-linecap="round"/><line x1="17" y1="30" x2="6" y2="18" stroke="#F5ECD7" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="36" x2="58" y2="25" stroke="#F5ECD7" stroke-width="3" stroke-linecap="round"/><line x1="46" y1="30" x2="58" y2="18" stroke="#F5ECD7" stroke-width="1.8" stroke-linecap="round"/><line x1="32" y1="36" x2="10" y2="46" stroke="#F5ECD7" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="30" cy="3" rx="6" ry="4" fill="#40916C" transform="rotate(-5,30,3)"/><ellipse cx="14" cy="3" rx="5" ry="3.5" fill="#2D6A4F" transform="rotate(18,14,3)"/><ellipse cx="46" cy="5" rx="4.5" ry="3" fill="#52B788" transform="rotate(-14,46,5)"/><ellipse cx="4" cy="15" rx="5" ry="3.5" fill="#40916C" transform="rotate(30,4,15)"/><ellipse cx="60" cy="16" rx="4.5" ry="3" fill="#2D6A4F" transform="rotate(-28,60,16)"/><ellipse cx="8" cy="44" rx="4.5" ry="3" fill="#40916C" transform="rotate(44,8,44)"/></svg>
+      </div>
+      <p class="land-eyebrow rise rise-1">Purpose Discovery</p>
+      <h1 class="land-title rise rise-2">You already know<br>something is <em>missing.</em><br>Let's find out what it is.</h1>
+      <p class="land-body rise rise-3">Most people spend their lives in work that doesn't fit who they are. Not because they haven't tried hard enough — but because they've never had the right questions. Canopy changes that.</p>
+      <button class="btn-begin rise rise-4" onclick="navigate('onboarding')">Begin the assessment</button>
+      <p class="land-meta rise rise-5">200 questions &middot; 25 minutes &middot; free to start</p>
+      <div class="land-proof rise rise-5">
+        <div class="proof-item"><span class="proof-num">200</span><span class="proof-label">questions</span></div>
+        <div class="proof-item"><span class="proof-num">8</span><span class="proof-label">dimensions</span></div>
+        <div class="proof-item"><span class="proof-num">60+</span><span class="proof-label">career matches</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="land-how">
+    <div class="land-how-inner">
+      <h2 class="land-how-title">How Canopy is different</h2>
+      <div class="how-grid">
+        <div class="how-card">
+          <span class="how-num">01</span>
+          <div class="how-title">Goes deeper than personality</div>
+          <p class="how-body">MBTI tells you how you're wired. StrengthsFinder tells you what you're good at. Canopy asks why any of it matters — and where it all points.</p>
+        </div>
+        <div class="how-card">
+          <span class="how-num">02</span>
+          <div class="how-title">Honors every kind of person</div>
+          <p class="how-body">The person who wants to change the world and the person who wants to serve quietly behind the scenes both get real answers. Neither is shamed for who they are.</p>
+        </div>
+        <div class="how-card">
+          <span class="how-num">03</span>
+          <div class="how-title">Points toward movement</div>
+          <p class="how-body">Results aren't a label. They're a direction. Canopy gives you specific next steps, resources, and real paths forward — not just a report to file away.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="land-cta-strip">
+    <h2 class="land-cta-title">The work you were <em>made to do</em> exists.</h2>
+    <p class="land-cta-sub">You just need better questions to find it.</p>
+    <button class="btn-begin" onclick="navigate('onboarding')">Start for free</button>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">
+          <svg width="20" height="23" viewBox="0 0 64 72" fill="none"><circle cx="32" cy="36" r="10" fill="#C9852A"/><circle cx="32" cy="36" r="5.5" fill="#F5C842"/><line x1="32" y1="36" x2="32" y2="66" stroke="#F5ECD7" stroke-width="4.5" stroke-linecap="round"/><line x1="32" y1="36" x2="30" y2="6" stroke="#F5ECD7" stroke-width="4" stroke-linecap="round"/><line x1="31" y1="20" x2="16" y2="6" stroke="#F5ECD7" stroke-width="2.5" stroke-linecap="round"/><line x1="31" y1="20" x2="44" y2="8" stroke="#F5ECD7" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="36" x2="4" y2="23" stroke="#F5ECD7" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="36" x2="10" y2="46" stroke="#F5ECD7" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="30" cy="3" rx="6" ry="4" fill="#40916C" transform="rotate(-5,30,3)"/><ellipse cx="46" cy="5" rx="4.5" ry="3" fill="#52B788" transform="rotate(-14,46,5)"/></svg>
+          <span class="footer-logo-word">Canopy</span>
+        </div>
+        <p class="footer-tagline">Grow into who you were made to be.</p>
+      </div>
+      <div class="footer-links">
+        <span class="footer-link" onclick="navigate('jobs')">Explore Careers</span>
+        <span class="footer-link" onclick="navigate('nextsteps')">Next Steps</span>
+        <span class="footer-link" onclick="navigate('about')">About</span>
+        <span class="footer-link" onclick="navigate('onboarding')">Take the Assessment</span>
+      </div>
+      <div class="footer-copy">&copy; 2026 Canopy &middot; trycanopy.co</div>
+    </div>
+  </footer>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     ONBOARDING
+═══════════════════════════════════ -->
+<section id="screen-onboarding" class="screen">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:80px 24px;">
+    <div class="onboard-wrap">
+      <div class="onboard-logo" onclick="navigate('landing')">
+        <svg width="28" height="32" viewBox="0 0 64 72" fill="none"><circle cx="32" cy="36" r="10" fill="#C9852A"/><circle cx="32" cy="36" r="5.5" fill="#F5C842"/><line x1="32" y1="36" x2="32" y2="66" stroke="#1A0F0A" stroke-width="4.5" stroke-linecap="round"/><line x1="32" y1="36" x2="30" y2="6" stroke="#1A0F0A" stroke-width="4" stroke-linecap="round"/><line x1="31" y1="20" x2="16" y2="6" stroke="#1A0F0A" stroke-width="2.5" stroke-linecap="round"/><line x1="31" y1="20" x2="44" y2="8" stroke="#1A0F0A" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="36" x2="4" y2="23" stroke="#1A0F0A" stroke-width="3.5" stroke-linecap="round"/><line x1="17" y1="30" x2="6" y2="18" stroke="#1A0F0A" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="36" x2="58" y2="25" stroke="#1A0F0A" stroke-width="3" stroke-linecap="round"/><line x1="46" y1="30" x2="58" y2="18" stroke="#1A0F0A" stroke-width="1.8" stroke-linecap="round"/><line x1="32" y1="36" x2="10" y2="46" stroke="#1A0F0A" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="30" cy="3" rx="6" ry="4" fill="#40916C" transform="rotate(-5,30,3)"/><ellipse cx="14" cy="3" rx="5" ry="3.5" fill="#2D6A4F" transform="rotate(18,14,3)"/><ellipse cx="46" cy="5" rx="4.5" ry="3" fill="#52B788" transform="rotate(-14,46,5)"/><ellipse cx="4" cy="15" rx="5" ry="3.5" fill="#40916C" transform="rotate(30,4,15)"/><ellipse cx="60" cy="16" rx="4.5" ry="3" fill="#2D6A4F" transform="rotate(-28,60,16)"/><ellipse cx="8" cy="44" rx="4.5" ry="3" fill="#40916C" transform="rotate(44,8,44)"/></svg>
+        <span style="font-family:'Playfair Display',serif;font-size:19px;font-weight:500;letter-spacing:0.1em;color:var(--brown);">Canopy</span>
+      </div>
+      <h2 class="onboard-title">Before we begin.</h2>
+      <p class="onboard-sub">Answer honestly — not how you think you should, but how you actually are. This takes about 25 minutes. We'll send your full results to your email.</p>
+      <label class="field-label" for="inp-name">Your first name</label>
+      <input class="field-input" type="text" id="inp-name" placeholder="e.g. David" autocomplete="given-name"/>
+      <label class="field-label" for="inp-email">Email address</label>
+      <input class="field-input" type="email" id="inp-email" placeholder="you@example.com" autocomplete="email"/>
+      <button class="btn-go" onclick="startAssessment()">Begin the assessment &rarr;</button>
+      <p class="field-note">No spam. Your results belong to you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     ASSESSMENT
+═══════════════════════════════════ -->
+<section id="screen-assessment" class="screen">
+  <div class="assess-top">
+    <div class="assess-logo" onclick="navigate('landing')">
+      <svg width="20" height="23" viewBox="0 0 64 72" fill="none"><circle cx="32" cy="36" r="10" fill="#C9852A"/><circle cx="32" cy="36" r="5.5" fill="#F5C842"/><line x1="32" y1="36" x2="32" y2="66" stroke="#1A0F0A" stroke-width="4.5" stroke-linecap="round"/><line x1="32" y1="36" x2="30" y2="6" stroke="#1A0F0A" stroke-width="4" stroke-linecap="round"/><line x1="31" y1="20" x2="16" y2="6" stroke="#1A0F0A" stroke-width="2.5" stroke-linecap="round"/><line x1="31" y1="20" x2="44" y2="8" stroke="#1A0F0A" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="36" x2="4" y2="23" stroke="#1A0F0A" stroke-width="3.5" stroke-linecap="round"/><line x1="17" y1="30" x2="6" y2="18" stroke="#1A0F0A" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="36" x2="58" y2="25" stroke="#1A0F0A" stroke-width="3" stroke-linecap="round"/><line x1="46" y1="30" x2="58" y2="18" stroke="#1A0F0A" stroke-width="1.8" stroke-linecap="round"/><line x1="32" y1="36" x2="10" y2="46" stroke="#1A0F0A" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="30" cy="3" rx="6" ry="4" fill="#40916C" transform="rotate(-5,30,3)"/><ellipse cx="14" cy="3" rx="5" ry="3.5" fill="#2D6A4F" transform="rotate(18,14,3)"/><ellipse cx="46" cy="5" rx="4.5" ry="3" fill="#52B788" transform="rotate(-14,46,5)"/><ellipse cx="4" cy="15" rx="5" ry="3.5" fill="#40916C" transform="rotate(30,4,15)"/><ellipse cx="60" cy="16" rx="4.5" ry="3" fill="#2D6A4F" transform="rotate(-28,60,16)"/><ellipse cx="8" cy="44" rx="4.5" ry="3" fill="#40916C" transform="rotate(44,8,44)"/></svg>
+      <span class="assess-logo-word">Canopy</span>
+    </div>
+    <div class="prog-wrap">
+      <span class="prog-dim" id="prog-dim"></span>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="assess-qnum" id="q-counter"></div>
+  </div>
+
+  <div class="q-stage" id="q-stage">
+    <span class="q-dim-label" id="q-dim-label"></span>
+    <div class="q-text-wrap"><p class="q-text" id="q-text"></p></div>
+    <div class="scale-wrap">
+      <div class="scale-btns" id="scale-btns"></div>
+      <div class="scale-labels">
+        <span class="scale-label">Strongly<br>disagree</span>
+        <span class="scale-label">Strongly<br>agree</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-back-q" id="btn-back" onclick="prevQ()">&larr; Back</button>
+
+  <div class="sec-transition" id="sec-transition">
+    <span class="st-label" id="st-label"></span>
+    <h2 class="st-title" id="st-title"></h2>
+    <p class="st-sub" id="st-sub"></p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     RESULTS
+═══════════════════════════════════ -->
+<section id="screen-results" class="screen">
+  <div class="results-wrap" style="animation:riseIn 0.6s ease forwards;">
+    <div class="res-hero">
+      <span class="res-eyebrow" id="res-eyebrow"></span>
+      <h2 class="res-title" id="res-title"></h2>
+      <p class="res-sub" id="res-sub"></p>
+    </div>
+
+    <div class="top-card">
+      <div class="top-card-badge"><span class="top-card-badge-dot"></span>Your #1 match</div>
+      <div class="top-card-name" id="top-name"></div>
+      <div class="top-card-match">
+        <span class="top-card-pct" id="top-pct"></span>
+        <div class="top-card-bar"><div class="top-card-bar-fill" id="top-bar" style="width:0%"></div></div>
+      </div>
+      <p class="top-card-desc" id="top-desc"></p>
+      <p class="top-card-why" id="top-why"></p>
+    </div>
+
+    <!-- Deep self-portrait -->
+    <div class="portrait-card">
+      <div class="card-title">Who you are</div>
+      <p class="card-sub">Based on 200 honest answers, here is a picture of how you're wired — not a label, but a portrait.</p>
+      <div class="portrait-body" id="portrait-body"></div>
+    </div>
+
+    <!-- Dimension breakdown -->
+    <div class="portrait-card">
+      <div class="card-title">Your seven dimensions</div>
+      <p class="card-sub">Each score reflects not intensity of feeling but honest self-description. A low score is as valid as a high one — it's telling you something true.</p>
+      <div class="dim-list" id="dim-rows"></div>
+    </div>
+
+    <!-- Dimension insights -->
+    <div class="insight-block" id="insight-block">
+      <!-- filled by JS -->
+    </div>
+
+    <!-- Locked results -->
+    <div class="locked-section">
+      <div class="card-title">Your full picture</div>
+      <p class="card-sub" style="margin-bottom:28px;">Unlock your remaining 4 career matches — each with a full explanation of why it fits, what the work actually looks like day to day, and concrete next steps.</p>
+      <div class="locked-list" id="locked-list"></div>
+      <div class="unlock-area">
+        <p class="unlock-price">Full results for <strong>$9</strong> — one time, no subscription ever.</p>
+        <button class="btn-unlock" onclick="handleUnlock()">Unlock my full results &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Next steps CTA -->
+    <div class="next-strip">
+      <div class="next-strip-title">Where do you go from here?</div>
+      <p class="next-strip-sub">Your results are a compass, not a contract. Here's how to start moving toward the work you were made for.</p>
+      <button class="btn-next-page" onclick="navigate('nextsteps')">See your next steps &rarr;</button>
+    </div>
+
+    <div class="results-restart"><button class="btn-restart" onclick="restart()">Start over</button></div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo"><svg width="18" height="21" viewBox="0 0 64 72" fill="none"><circle cx="32" cy="36" r="10" fill="#C9852A"/><circle cx="32" cy="36" r="5.5" fill="#F5C842"/><line x1="32" y1="36" x2="32" y2="66" stroke="#F5ECD7" stroke-width="4.5" stroke-linecap="round"/><line x1="32" y1="36" x2="30" y2="6" stroke="#F5ECD7" stroke-width="4" stroke-linecap="round"/><ellipse cx="30" cy="3" rx="6" ry="4" fill="#40916C" transform="rotate(-5,30,3)"/></svg><span class="footer-logo-word">Canopy</span></div>
+        <p class="footer-tagline">Grow into who you were made to be.</p>
+      </div>
+      <div class="footer-links">
+        <span class="footer-link" onclick="navigate('jobs')">Explore Careers</span>
+        <span class="footer-link" onclick="navigate('nextsteps')">Next Steps</span>
+        <span class="footer-link" onclick="navigate('about')">About</span>
+      </div>
+      <div class="footer-copy">&copy; 2026 Canopy</div>
+    </div>
+  </footer>
+</section>
+
+<!-- ═══════════════════════════════════
+     JOBS EXPLORER
+═══════════════════════════════════ -->
+<section id="screen-jobs" class="screen">
+  <div class="jobs-hero">
+    <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;">Career Explorer</p>
+    <h1 class="jobs-hero-title">The work that <em>fits who you are</em></h1>
+    <p class="jobs-hero-sub">Explore 60+ careers organized by how they connect to meaning, skill, and way of working — not just salary or status.</p>
+  </div>
+  <div class="jobs-body">
+    <div class="cluster-nav" id="cluster-nav"></div>
+    <div id="cluster-sections"></div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div><div class="footer-logo"><svg width="18" height="21" viewBox="0 0 64 72" fill="none"><circle cx="32" cy="36" r="10" fill="#C9852A"/><circle cx="32" cy="36" r="5.5" fill="#F5C842"/><line x1="32" y1="36" x2="32" y2="66" stroke="#F5ECD7" stroke-width="4.5" stroke-linecap="round"/><ellipse cx="30" cy="3" rx="6" ry="4" fill="#40916C" transform="rotate(-5,30,3)"/></svg><span class="footer-logo-word">Canopy</span></div><p class="footer-tagline">Grow into who you were made to be.</p></div>
+      <div class="footer-links"><span class="footer-link" onclick="navigate('landing')">Home</span><span class="footer-link" onclick="navigate('nextsteps')">Next Steps</span><span class="footer-link" onclick="navigate('about')">About</span></div>
+      <div class="footer-copy">&copy; 2026 Canopy</div>
+    </div>
+  </footer>
+</section>
+
+<!-- ═══════════════════════════════════
+     ABOUT
+═══════════════════════════════════ -->
+<section id="screen-about" class="screen">
+  <div class="about-hero">
+    <div class="about-hero-inner">
+      <p class="about-hero-label">About Canopy</p>
+      <h1 class="about-hero-title">Built for the person who knows <em>something is missing</em></h1>
+      <p class="about-hero-body">Canopy was built because every existing career assessment answers the wrong question. They tell you what you are. We wanted to help you discover what you're for.</p>
+    </div>
+  </div>
+
+  <div class="about-body">
+    <div class="about-section">
+      <span class="about-section-label">The problem</span>
+      <h2 class="about-section-title">Why most career tools fall short</h2>
+      <div class="about-section-body">
+        <p>Myers-Briggs tells you how you process the world. StrengthsFinder tells you what you're good at. Holland Codes tell you what kinds of work environments suit your personality. These are all useful. But none of them answer the question that actually keeps people up at night: <em>what am I supposed to do with my life?</em></p>
+        <p>The problem isn't a lack of self-knowledge. Most people who feel stuck know themselves reasonably well. The problem is that existing tools describe the person without pointing them anywhere. They produce accurate portraits with no directions attached.</p>
+        <p>Canopy was built to be different. Our 200-question assessment goes beyond personality type to probe the things that reveal calling: what makes time disappear, what injustice you can't walk past, how you need to see your impact, what you're willing to sacrifice, and whether you need to build something or serve within something already built.</p>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <span class="about-section-label">Our values</span>
+      <h2 class="about-section-title">What we believe about work and calling</h2>
+      <div class="about-values">
+        <div class="about-value-card">
+          <span class="about-value-num">01</span>
+          <div class="about-value-title">Calling is real</div>
+          <p class="about-value-body">We believe every person has a unique shape — a combination of wiring, story, and capacity that points toward specific kinds of work. That's not mystical. It's observable.</p>
+        </div>
+        <div class="about-value-card">
+          <span class="about-value-num">02</span>
+          <div class="about-value-title">No one is shamed here</div>
+          <p class="about-value-body">The person called to serve quietly in the background is just as fully seen as the person called to lead a movement. There is no hierarchy of callings at Canopy.</p>
+        </div>
+        <div class="about-value-card">
+          <span class="about-value-num">03</span>
+          <div class="about-value-title">The journey reveals you</div>
+          <p class="about-value-body">By the time you see your results, you should already feel like you know yourself better. The act of sitting with each question honestly is part of the discovery.</p>
+        </div>
+        <div class="about-value-card">
+          <span class="about-value-num">04</span>
+          <div class="about-value-title">Results point to movement</div>
+          <p class="about-value-body">A result that produces no action is just information. Canopy is designed to produce clarity with direction — a compass that starts you moving, not a label to file away.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <span class="about-section-label">The founder</span>
+      <h2 class="about-section-title">Where this came from</h2>
+      <div class="founder-block">
+        <div class="founder-avatar"><span class="founder-initials">D</span></div>
+        <div>
+          <div class="founder-name">David</div>
+          <div class="founder-role">Founder, Canopy</div>
+          <div class="founder-bio">
+            <p>I went through a fellowship in Atlanta trying to figure out what I was supposed to do with my life. I tried podcasting — I loved it. I taught — I loved that too. I worked with youth and found something came alive in me around young people. Then the logical next step showed up: a middle school pastor role. And I said no.</p>
+            <p>That experience — enjoying all the pieces but the assembled thing being wrong — is what Canopy is built to solve. The problem wasn't a lack of clarity about what I enjoyed. It was a lack of granularity about <em>how</em> I needed to do the work. I needed to build something, not sustain a role. I needed ownership and variety, not a defined position inside someone else's institution.</p>
+            <p>No existing assessment would have caught that. They would have looked at podcasting + teaching + youth and said: ministry. But that's not what I was wired for. Canopy is the tool I needed and couldn't find.</p>
+            <p>I built Canopy outside of my primary work — not to become a career counselor, but because this particular problem felt unsolved and I believed I was uniquely shaped to solve it. I'm a Christian who arrived at faith through logic. I believe calling is real and that people can find it. And I believe the right questions make all the difference.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <span class="about-section-label">The methodology</span>
+      <h2 class="about-section-title">How the assessment works</h2>
+      <div class="about-section-body">
+        <p>Canopy measures eight dimensions: Purpose &amp; Meaning, Environment, Skills, Interests, Work Style, Values, Personality, and Mode of Impact. The eighth dimension is what separates Canopy from every other tool — it measures not just what you want to do, but how you need to do it and at what scale.</p>
+        <p>Each question is designed to be answerable regardless of emotional intensity. You don't have to be passionate about something for the answer to matter. A steady person who consistently scores pragmatic preferences is learning something just as true as someone whose scores skew toward mission and meaning. Both signals are honored.</p>
+        <p>Questions are delivered one at a time, on a scale of five equal dots with no numbers — because 1 and 5 carry equal weight. The scale is labeled only "strongly disagree" and "strongly agree." This removes the implicit bias toward higher scores that plagues most assessments.</p>
+        <p>Results are matched against 60+ career profiles using a weighted scoring algorithm that prioritizes your Purpose &amp; Meaning dimension at 2x weight. The top match is given to you free. The remaining four require a one-time $9 unlock — the cost of a sandwich, for something that could redirect years.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div><div class="footer-logo"><svg width="18" height="21" viewBox="0 0 64 72" fill="none"><circle cx="32" cy="36" r="10" fill="#C9852A"/><circle cx="32" cy="36" r="5.5" fill="#F5C842"/><line x1="32" y1="36" x2="32" y2="66" stroke="#F5ECD7" stroke-width="4.5" stroke-linecap="round"/><ellipse cx="30" cy="3" rx="6" ry="4" fill="#40916C" transform="rotate(-5,30,3)"/></svg><span class="footer-logo-word">Canopy</span></div><p class="footer-tagline">Grow into who you were made to be.</p></div>
+      <div class="footer-links"><span class="footer-link" onclick="navigate('landing')">Home</span><span class="footer-link" onclick="navigate('jobs')">Explore Careers</span><span class="footer-link" onclick="navigate('nextsteps')">Next Steps</span></div>
+      <div class="footer-copy">&copy; 2026 Canopy</div>
+    </div>
+  </footer>
+</section>
+
+<!-- ═══════════════════════════════════
+     NEXT STEPS
+═══════════════════════════════════ -->
+<section id="screen-nextsteps" class="screen">
+  <div class="nextsteps-hero">
+    <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;">After the assessment</p>
+    <h1 class="nextsteps-hero-title">Now that you know — <em>what do you do?</em></h1>
+    <p class="nextsteps-hero-sub">Clarity without direction is just interesting information. Here's how to turn what Canopy revealed into actual movement.</p>
+  </div>
+
+  <div class="nextsteps-body">
+    <div class="steps-grid">
+      <div class="step-card">
+        <span class="step-num">01</span>
+        <div class="step-title">Sit with what surprised you</div>
+        <p class="step-body">Before doing anything, notice which result surprised you — and which ones confirmed something you already knew. Both are data. The surprises especially deserve time.</p>
+        <div class="step-actions">
+          <span class="step-action">Journal your first reactions</span>
+          <span class="step-action">Share results with someone who knows you well</span>
+          <span class="step-action">Notice what you want to dismiss</span>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-num">02</span>
+        <div class="step-title">Have a real conversation</div>
+        <p class="step-body">Your results aren't final — they're a starting place for a better conversation. Find someone in the field of your top match and ask them what the work actually looks like.</p>
+        <div class="step-actions">
+          <span class="step-action">Reach out to one person in your #1 match field</span>
+          <span class="step-action">Ask: "What do you wish you'd known before starting?"</span>
+          <span class="step-action">Ask: "What kind of person thrives here vs. struggles?"</span>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-num">03</span>
+        <div class="step-title">Try before you decide</div>
+        <p class="step-body">The best clarity comes from small experiments, not big decisions. Before committing to a path, find the smallest possible way to try the work and see how it feels.</p>
+        <div class="step-actions">
+          <span class="step-action">Volunteer in the field for one day</span>
+          <span class="step-action">Take one online course in the subject</span>
+          <span class="step-action">Find a side project that uses the skill</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="resource-section">
+      <div class="resource-title">Useful tools and resources</div>
+      <p class="resource-sub">Things worth exploring as you process your results and figure out next steps.</p>
+      <div class="resource-grid">
+        <div class="resource-card">
+          <div class="resource-card-title">O*NET Online</div>
+          <div class="resource-card-desc">The U.S. Department of Labor's free database of detailed career information — including what a job actually involves day to day, salary data, and growth outlook.</div>
+          <a class="resource-card-link" href="https://www.onetonline.org" target="_blank">onetonline.org &rarr;</a>
+        </div>
+        <div class="resource-card">
+          <div class="resource-card-title">Occupational Outlook Handbook</div>
+          <div class="resource-card-desc">BLS data on hundreds of careers — growth projections, median salaries, and educational requirements. Grounded in actual labor market data.</div>
+          <a class="resource-card-link" href="https://www.bls.gov/ooh" target="_blank">bls.gov/ooh &rarr;</a>
+        </div>
+        <div class="resource-card">
+          <div class="resource-card-title">Informational interviews</div>
+          <div class="resource-card-desc">The most underused career tool in existence. Ask someone doing the work you're curious about if you can have 20 minutes to ask them questions. Most people say yes.</div>
+          <span class="resource-card-link" style="cursor:pointer;">How to ask for one &rarr;</span>
+        </div>
+        <div class="resource-card">
+          <div class="resource-card-title">Designing Your Life (Burnett & Evans)</div>
+          <div class="resource-card-desc">A Stanford course turned into a book. The best framework we've found for treating career exploration like a design problem — prototyping lives before committing to them.</div>
+          <span class="resource-card-link" style="cursor:pointer;">Find it at your library &rarr;</span>
+        </div>
+        <div class="resource-card">
+          <div class="resource-card-title">The 2-Hour Job Search (Dalton)</div>
+          <div class="resource-card-desc">A practical system for targeted outreach, informational interviews, and navigating job searches without wasting months on applications that go nowhere.</div>
+          <span class="resource-card-link" style="cursor:pointer;">Find it at your library &rarr;</span>
+        </div>
+        <div class="resource-card">
+          <div class="resource-card-title">Your local community</div>
+          <div class="resource-card-desc">Churches, nonprofits, and community organizations often have volunteer roles that let you try meaningful work before committing. Don't overlook what's already around you.</div>
+          <span class="resource-card-link" style="cursor:pointer;">Search VolunteerMatch &rarr;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="resource-section">
+      <div class="resource-title">Common questions after the assessment</div>
+      <p class="resource-sub">Things people often wonder when they see their results for the first time.</p>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">My top match surprises me. What do I do with that?<span class="faq-arrow">&#8964;</span></div>
+          <div class="faq-a">Sit with the surprise before dismissing it. Often what surprises us is a truth we've been avoiding, or a possibility we've talked ourselves out of for practical reasons. Ask: "Is this surprising because it's wrong, or because it's right and I'm afraid of it?" They're different sensations.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What if I've already tried this career and it didn't work out?<span class="faq-arrow">&#8964;</span></div>
+          <div class="faq-a">The career path is right, but the specific role or institution might not have been. A teacher who burns out in a public school might thrive at a small private school or as an independent tutor. The work itself wasn't wrong — the container was. Try to separate the two.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">I scored low on Purpose & Meaning. What does that mean?<span class="faq-arrow">&#8964;</span></div>
+          <div class="faq-a">It means you're honest and pragmatic — which is a real strength. Not everyone is wired to need their work to feel transcendently meaningful. You likely thrive on clear goals, tangible results, and work that pays well and lets you live a full life outside of it. Canopy respects that completely. Your top matches will reflect it.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">I'm already in my career. Is it too late to change?<span class="faq-arrow">&#8964;</span></div>
+          <div class="faq-a">Most of the people who need Canopy most are mid-career, not starting out. And "change" doesn't always mean leaving your field — sometimes it means shifting roles within it, taking on different responsibilities, or finding a way to do the same underlying work in a setting that fits you better. Small pivots are underrated.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">My top match doesn't pay enough. What do I do?<span class="faq-arrow">&#8964;</span></div>
+          <div class="faq-a">First, check your assumptions — many callings pay more than people expect once you're established. Second, look at your other matches — often #2 or #3 is a field that shares the same underlying wiring but has different financial dynamics. Third, consider the cost of staying in work that slowly drains you. That cost is real too, even if it doesn't show on a spreadsheet.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How often should I retake the assessment?<span class="faq-arrow">&#8964;</span></div>
+          <div class="faq-a">Your core wiring doesn't change much, but your situation does. Major life events — a new job, a move, having children, a loss — often shift what matters most and which kinds of work feel right. We'd suggest revisiting in 2–3 years, or whenever you feel significantly different from who you were when you last took it.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:48px 0 0;">
+      <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Haven't taken the assessment yet?</p>
+      <button class="btn-begin" style="font-size:14px;padding:16px 44px;" onclick="navigate('onboarding')">Begin for free &rarr;</button>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div><div class="footer-logo"><svg width="18" height="21" viewBox="0 0 64 72" fill="none"><circle cx="32" cy="36" r="10" fill="#C9852A"/><circle cx="32" cy="36" r="5.5" fill="#F5C842"/><line x1="32" y1="36" x2="32" y2="66" stroke="#F5ECD7" stroke-width="4.5" stroke-linecap="round"/><ellipse cx="30" cy="3" rx="6" ry="4" fill="#40916C" transform="rotate(-5,30,3)"/></svg><span class="footer-logo-word">Canopy</span></div><p class="footer-tagline">Grow into who you were made to be.</p></div>
+      <div class="footer-links"><span class="footer-link" onclick="navigate('landing')">Home</span><span class="footer-link" onclick="navigate('jobs')">Explore Careers</span><span class="footer-link" onclick="navigate('about')">About</span></div>
+      <div class="footer-copy">&copy; 2026 Canopy</div>
+    </div>
+  </footer>
+</section>
+
+<script>
+// ═══════════════════════════════════
+// DATA — 200 QUESTIONS, 8 DIMENSIONS
+// ═══════════════════════════════════
+const QUESTIONS = [
+// ── PURPOSE & MEANING (25 questions) ──
+{id:1,dim:"PM",text:"When I help someone navigate a genuinely hard moment, I feel something settle inside me — like I was made for exactly that."},
+{id:2,dim:"PM",text:"I want the work I do to still matter after I'm gone."},
+{id:3,dim:"PM",text:"A high salary in work that feels meaningless would eventually hollow me out."},
+{id:4,dim:"PM",text:"I am drawn to problems that other people have given up on."},
+{id:5,dim:"PM",text:"I would take a significant pay cut to do work that feels like it genuinely matters."},
+{id:6,dim:"PM",text:"I feel a low-grade restlessness when I can't connect my daily work to something larger."},
+{id:7,dim:"PM",text:"I want to be known for what I built or contributed — not for what I earned or accumulated."},
+{id:8,dim:"PM",text:"I believe I have a specific calling — not just preferences, but something I was uniquely shaped to do."},
+{id:9,dim:"PM",text:"I am more motivated by the difference my work makes than by how it reflects on me."},
+{id:10,dim:"PM",text:"I would stay in a less prestigious role if the work itself was more meaningful."},
+{id:11,dim:"PM",text:"When I'm doing work that matters, I notice a different quality of energy than when I'm just getting things done."},
+{id:12,dim:"PM",text:"I find myself thinking about legacy — what my life will have added up to — more than most people seem to."},
+{id:13,dim:"PM",text:"I am willing to take a path that looks unconventional if I genuinely believe it's what I'm meant to do."},
+{id:14,dim:"PM",text:"A sense of disconnection between my daily work and my deeper values is something I find hard to ignore over time."},
+{id:15,dim:"PM",text:"I believe every person has a unique contribution to make — not just a job to fill."},
+{id:16,dim:"PM",text:"I am more drawn to addressing the root cause of a problem than fixing its symptoms."},
+{id:17,dim:"PM",text:"I would rather fall short at something that genuinely mattered than succeed brilliantly at something that didn't."},
+{id:18,dim:"PM",text:"When someone around me is struggling, my instinct is to do something about it — not just notice it."},
+{id:19,dim:"PM",text:"Looking back at the shape of my life, I can see threads pointing toward something specific — not just random experiences."},
+{id:20,dim:"PM",text:"Work and purpose are inseparable for me. A job is never just a job."},
+{id:21,dim:"PM",text:"There is at least one broken thing in the world that I genuinely cannot stop thinking about."},
+{id:22,dim:"PM",text:"I feel most fully myself when what I'm doing is connected to something I actually believe in."},
+{id:23,dim:"PM",text:"The idea of reaching the end of my life and realizing I played it safe rather than meaningful bothers me significantly."},
+{id:24,dim:"PM",text:"I notice myself being more energized by work that serves others than by work that advances my own position."},
+{id:25,dim:"PM",text:"I hold my work loosely enough to leave it if I became convinced something more important was asking for my time."},
+
+// ── ENVIRONMENT (22 questions) ──
+{id:26,dim:"ENV",text:"I do my best thinking and best work when I'm working alone rather than in a group."},
+{id:27,dim:"ENV",text:"I thrive when my environment changes frequently — new problems, new people, new contexts."},
+{id:28,dim:"ENV",text:"Clear structure and predictable expectations help me perform better, not worse."},
+{id:29,dim:"ENV",text:"Physical environments — being outdoors, moving around, working with my hands — are important to my sense of satisfaction at work."},
+{id:30,dim:"ENV",text:"I work better in a small, close-knit team than inside a large organization."},
+{id:31,dim:"ENV",text:"I need real flexibility in my schedule and location to stay motivated long-term."},
+{id:32,dim:"ENV",text:"A quiet, focused, distraction-free environment makes me significantly more productive."},
+{id:33,dim:"ENV",text:"I am energized by frequent interaction with new people — it adds fuel rather than draining it."},
+{id:34,dim:"ENV",text:"I am most engaged when I'm building something from scratch rather than maintaining something already established."},
+{id:35,dim:"ENV",text:"I would genuinely prefer to work remotely most of the time rather than in a shared office."},
+{id:36,dim:"ENV",text:"Autonomy over how I get things done matters more to me than autonomy over what I do."},
+{id:37,dim:"ENV",text:"I work with greater satisfaction when I can see and touch the results of my work directly."},
+{id:38,dim:"ENV",text:"I prefer to work within an existing institution rather than start something new from nothing."},
+{id:39,dim:"ENV",text:"The culture and values of an organization shape my experience of the work as much as the work itself."},
+{id:40,dim:"ENV",text:"I would rather have too much variety than too little, even if variety means less mastery."},
+{id:41,dim:"ENV",text:"I function better with clear deadlines and accountability structures than with open-ended timelines."},
+{id:42,dim:"ENV",text:"I find creative environments — studios, open floor plans, maker spaces — more energizing than traditional office settings."},
+{id:43,dim:"ENV",text:"I need my work environment to feel physically safe and emotionally consistent."},
+{id:44,dim:"ENV",text:"I prefer roles where I can go deep on a few things over roles where I manage many different responsibilities simultaneously."},
+{id:45,dim:"ENV",text:"I am most effective when I have a mentor, coach, or experienced guide in my environment."},
+{id:46,dim:"ENV",text:"Pressure and high-stakes environments sharpen me rather than rattle me."},
+{id:47,dim:"ENV",text:"I feel most settled when my work community shares my values and I'm not constantly navigating cultural friction."},
+
+// ── SKILLS (25 questions) ──
+{id:48,dim:"SKL",text:"I can explain complex ideas to people who don't share my background — and I do it in a way that actually lands."},
+{id:49,dim:"SKL",text:"Numbers, data, and quantitative reasoning come naturally to me."},
+{id:50,dim:"SKL",text:"When I encounter a problem, my instinct is to analyze it — break it apart, understand why it exists, and work from there."},
+{id:51,dim:"SKL",text:"I have a reliable sense for how people are feeling, even when they're not saying it directly."},
+{id:52,dim:"SKL",text:"Organizing things — people, projects, information, systems — is something I do naturally and well."},
+{id:53,dim:"SKL",text:"I pick up new technical tools and software quickly, often without needing much instruction."},
+{id:54,dim:"SKL",text:"I think visually — about design, aesthetics, and how things look and feel to the person experiencing them."},
+{id:55,dim:"SKL",text:"I can move people toward a position through conversation — not manipulation, but genuine persuasion."},
+{id:56,dim:"SKL",text:"I am a confident writer. I feel at home expressing myself on the page."},
+{id:57,dim:"SKL",text:"I am genuinely good at teaching — at breaking something down until the other person actually understands it."},
+{id:58,dim:"SKL",text:"I notice details and inconsistencies that other people tend to miss."},
+{id:59,dim:"SKL",text:"I am effective at seeing the strategic picture — where something is headed, what's at stake, and what the move is."},
+{id:60,dim:"SKL",text:"When tension enters a room, I tend to be the one who de-escalates it rather than amplifying it."},
+{id:61,dim:"SKL",text:"I take initiative. I don't wait to be told what to do if I can see what needs doing."},
+{id:62,dim:"SKL",text:"I read people and environments quickly — and I adjust my approach naturally based on what I'm reading."},
+{id:63,dim:"SKL",text:"I am effective at building relationships with people who are initially guarded or resistant."},
+{id:64,dim:"SKL",text:"I am good at asking questions that help other people think more clearly about their own situation."},
+{id:65,dim:"SKL",text:"I think well in public — presentations, group discussions, leading meetings — without losing my ability to think clearly."},
+{id:66,dim:"SKL",text:"I have a physical skill or capacity — strength, coordination, spatial sense, manual dexterity — that feels like a genuine asset."},
+{id:67,dim:"SKL",text:"I am good at managing multiple moving parts simultaneously without losing track of the whole."},
+{id:68,dim:"SKL",text:"I can take something chaotic and impose a clear, workable structure on it."},
+{id:69,dim:"SKL",text:"I have a capacity for sustained focus that lets me go deep on difficult problems without losing attention."},
+{id:70,dim:"SKL",text:"I am good at giving feedback in a way that people can actually hear and use."},
+{id:71,dim:"SKL",text:"I can hold a lot of ambiguity and still function — uncertainty doesn't paralyze me."},
+{id:72,dim:"SKL",text:"I am often the person people come to when they don't know what to do next."},
+
+// ── INTERESTS (22 questions) ──
+{id:73,dim:"INT",text:"I am drawn to topics related to business — how things get built, how markets work, how organizations function."},
+{id:74,dim:"INT",text:"Human behavior fascinates me. I am genuinely curious about why people do what they do."},
+{id:75,dim:"INT",text:"Technology — how it works, what it makes possible — genuinely captures my interest."},
+{id:76,dim:"INT",text:"I am drawn to creative fields: art, music, design, storytelling, performance."},
+{id:77,dim:"INT",text:"I care deeply about social and systemic issues and want to be part of addressing them."},
+{id:78,dim:"INT",text:"Health, wellness, and the human body are genuinely interesting to me."},
+{id:79,dim:"INT",text:"I enjoy working with young people and find something energizing about the environment of development and growth."},
+{id:80,dim:"INT",text:"Nature, the environment, the outdoors — these feel important and interesting to me, not just pleasant."},
+{id:81,dim:"INT",text:"Leadership and organizational dynamics — how groups work, how decisions get made — interest me."},
+{id:82,dim:"INT",text:"I am drawn to questions of faith, philosophy, meaning, and how people understand their lives."},
+{id:83,dim:"INT",text:"I enjoy research, learning, and the pursuit of knowledge for its own sake — I am energized by discovering things."},
+{id:84,dim:"INT",text:"I am drawn to hands-on work: building things, fixing things, making things work."},
+{id:85,dim:"INT",text:"Law, policy, and the systems that govern how society is organized interest me."},
+{id:86,dim:"INT",text:"Entrepreneurship — the process of building something new from an idea — genuinely excites me."},
+{id:87,dim:"INT",text:"Media, storytelling, and the way narratives shape how people understand the world interest me."},
+{id:88,dim:"INT",text:"Education — how people learn and how that learning is designed — is something I find interesting beyond just teaching."},
+{id:89,dim:"INT",text:"Finance — how money moves, how wealth is built and managed — is a subject I find genuinely interesting."},
+{id:90,dim:"INT",text:"I am drawn to data: finding patterns, making sense of information, and using it to make better decisions."},
+{id:91,dim:"INT",text:"I am interested in sports, fitness, or the physical performance of the human body."},
+{id:92,dim:"INT",text:"Architecture, the built environment, and how physical spaces shape human experience interest me."},
+{id:93,dim:"INT",text:"Community — how people form, sustain, and care for each other in neighborhoods, churches, and organizations — interests me deeply."},
+{id:94,dim:"INT",text:"I am drawn to international contexts: different cultures, global systems, and the complexity of the wider world."},
+
+// ── WORK STYLE (22 questions) ──
+{id:95,dim:"WS",text:"I prefer to plan carefully and work methodically rather than figure things out as I go."},
+{id:96,dim:"WS",text:"I get more done in short, intense bursts of focus than in long sustained work sessions."},
+{id:97,dim:"WS",text:"Having multiple projects running simultaneously keeps me engaged — one project at a time feels constraining."},
+{id:98,dim:"WS",text:"I can make a confident call with incomplete information. Waiting for certainty isn't my default."},
+{id:99,dim:"WS",text:"In a group, I tend to step toward leadership rather than waiting for someone else to do it."},
+{id:100,dim:"WS",text:"I get real satisfaction from executing someone else's vision with excellence, even if the credit goes to them."},
+{id:101,dim:"WS",text:"Routine and repetition don't bother me. Consistency gives me a sense of solidity, not boredom."},
+{id:102,dim:"WS",text:"I work harder and better when there's a clear competitive dimension — something to win."},
+{id:103,dim:"WS",text:"When I face a complex problem, my first instinct is to think it through alone before involving others."},
+{id:104,dim:"WS",text:"I tend to take calculated risks rather than defaulting to the safe option."},
+{id:105,dim:"WS",text:"Starting new things energizes me more than finishing or maintaining them."},
+{id:106,dim:"WS",text:"I would rather specialize deeply in one domain than cultivate broad capability across many."},
+{id:107,dim:"WS",text:"I perform best when I have a clear goal to aim at but real freedom in how I get there."},
+{id:108,dim:"WS",text:"Helping others succeed — even without recognition — is a form of satisfaction that feels complete on its own."},
+{id:109,dim:"WS",text:"I do my best work when the outcome personally matters to me, not just professionally."},
+{id:110,dim:"WS",text:"I am more of a systems thinker — I want to understand the whole before I address any part."},
+{id:111,dim:"WS",text:"I'm comfortable being the person in the room who doesn't have the answer yet."},
+{id:112,dim:"WS",text:"I learn best by doing — theory is interesting, but I need to apply something to actually internalize it."},
+{id:113,dim:"WS",text:"I would describe my natural pace as steady and thorough rather than fast and iterative."},
+{id:114,dim:"WS",text:"I am more effective in unstructured situations where I can create order than in highly structured situations where I implement someone else's."},
+{id:115,dim:"WS",text:"I find that pressure actually improves my performance — I think more clearly with stakes involved."},
+{id:116,dim:"WS",text:"I am someone people describe as reliable and consistent — the kind of person you know will follow through."},
+
+// ── VALUES (22 questions) ──
+{id:117,dim:"VAL",text:"Financial security is one of the most important factors in my career decisions."},
+{id:118,dim:"VAL",text:"I need real creative freedom in my work — I cannot thrive long-term in an environment where I'm just executing others' ideas."},
+{id:119,dim:"VAL",text:"How I'm perceived professionally — my reputation and standing in my field — matters to me."},
+{id:120,dim:"VAL",text:"Work-life balance is a genuine priority, not just something I say but don't mean."},
+{id:121,dim:"VAL",text:"Serving my immediate community — the people around me, in this place, at this time — is something I care about concretely."},
+{id:122,dim:"VAL",text:"Continuous learning and growth at work are essential to my long-term satisfaction."},
+{id:123,dim:"VAL",text:"Stability and predictability matter to me — I function better when I know what to expect."},
+{id:124,dim:"VAL",text:"Building something I own — a business, a practice, a project — appeals to me more than being excellent inside someone else's institution."},
+{id:125,dim:"VAL",text:"The quality of relationships at work matters deeply to me. Working alongside people I respect and care about is not optional."},
+{id:126,dim:"VAL",text:"I am unwilling to stay in work that conflicts with my personal beliefs, even if it's well-compensated."},
+{id:127,dim:"VAL",text:"Being recognized for my specific contributions — not just for the team's success — matters to me."},
+{id:128,dim:"VAL",text:"Variety and novelty are important. Doing the same thing for years would feel like stagnation, not stability."},
+{id:129,dim:"VAL",text:"I want to work in an environment where my faith or deepest personal convictions are not something I have to hide."},
+{id:130,dim:"VAL",text:"I am more interested in fixing broken systems than in working within them as they are."},
+{id:131,dim:"VAL",text:"Being mentored — and eventually mentoring others — is something I value as part of how I grow."},
+{id:132,dim:"VAL",text:"I value efficiency. I want to do excellent work, but I also want to do it in a way that doesn't consume all of me."},
+{id:133,dim:"VAL",text:"Physical health and the ability to move, use my body, or work in natural environments is part of what I need from my work situation."},
+{id:134,dim:"VAL",text:"I value being part of an organization whose stated mission I actually believe in."},
+{id:135,dim:"VAL",text:"I care about the societal impact of what my organization produces — I want to be confident we're making things better, not worse."},
+{id:136,dim:"VAL",text:"Independence — from a boss, from institutional constraints — is something I actively prioritize."},
+{id:137,dim:"VAL",text:"I would stay in a smaller role at a mission-aligned organization over a larger role at one I didn't believe in."},
+{id:138,dim:"VAL",text:"Having time and margin for life outside of work — family, community, faith — is genuinely non-negotiable for me."},
+
+// ── PERSONALITY (22 questions) ──
+{id:139,dim:"PER",text:"Being around people tends to leave me feeling more energized than I was before."},
+{id:140,dim:"PER",text:"I prefer to think something through carefully before saying it out loud rather than processing in conversation."},
+{id:141,dim:"PER",text:"Even in genuinely difficult situations, I tend to see a path forward rather than getting stuck in what's wrong."},
+{id:142,dim:"PER",text:"I can hold my position under pressure without becoming defensive or aggressive."},
+{id:143,dim:"PER",text:"I feel other people's emotional states in a way that others sometimes don't — their pain registers as real to me."},
+{id:144,dim:"PER",text:"I push hard toward my goals. Drive and ambition are natural parts of how I'm wired."},
+{id:145,dim:"PER",text:"I adjust easily when circumstances change. I'm not attached to plans once the situation has shifted."},
+{id:146,dim:"PER",text:"Injustice — systems or people treated unfairly — produces genuine moral outrage in me, not just intellectual concern."},
+{id:147,dim:"PER",text:"My instinct is to look out for the people around me. I notice when someone needs something before they ask."},
+{id:148,dim:"PER",text:"I ask a lot of questions. I'm genuinely curious about how things work and why things are the way they are."},
+{id:149,dim:"PER",text:"I believe things can and should be better — I hold a persistent idealism about what's possible."},
+{id:150,dim:"PER",text:"I bounce back from setbacks more quickly than most people. Failure doesn't stay with me the way it seems to for others."},
+{id:151,dim:"PER",text:"When I meet people who should know each other, I introduce them. I'm a natural connector."},
+{id:152,dim:"PER",text:"I am comfortable doing excellent work that no one notices, as long as the mission moves forward."},
+{id:153,dim:"PER",text:"Complexity draws me in. Simple problems feel dull; I want to work on things that are genuinely hard."},
+{id:154,dim:"PER",text:"I have a strong sense of identity — I know who I am and what I stand for, and I don't lose that under pressure."},
+{id:155,dim:"PER",text:"I find that humor and lightness come naturally to me even in serious environments."},
+{id:156,dim:"PER",text:"I am more comfortable in the background than in the spotlight."},
+{id:157,dim:"PER",text:"I tend to feel things deeply — both positive and negative — more intensely than most people around me."},
+{id:158,dim:"PER",text:"I am someone people describe as calm. Even in crisis, I tend to slow down rather than speed up."},
+{id:159,dim:"PER",text:"I have strong convictions and I am willing to say unpopular things in service of what I believe is true."},
+{id:160,dim:"PER",text:"I find meaning in small, consistent acts of faithfulness — I don't need every action to feel significant."},
+
+// ── MODE OF IMPACT (22 questions) — the NEW dimension ──
+{id:161,dim:"MOI",text:"I need to feel that my work has a direct, visible effect on real people — not that it feeds into a process somewhere downstream."},
+{id:162,dim:"MOI",text:"The idea of influencing many people at scale — through writing, teaching, media, or platform — excites me more than working with one person at a time."},
+{id:163,dim:"MOI",text:"I am most fulfilled when I can see a tangible product or result from my work — something I made, fixed, or improved."},
+{id:164,dim:"MOI",text:"Working directly with one person and going deep on their specific situation is more satisfying to me than working with groups."},
+{id:165,dim:"MOI",text:"I want my work to involve creation — making something that didn't exist before."},
+{id:166,dim:"MOI",text:"I am drawn to roles where I lead, guide, or develop other people rather than primarily producing outputs myself."},
+{id:167,dim:"MOI",text:"I want to be known as the expert in my field — the person others consult, defer to, and build on."},
+{id:168,dim:"MOI",text:"The behind-the-scenes role appeals to me. I want to contribute to something larger without needing to be the visible face of it."},
+{id:169,dim:"MOI",text:"I want to build an institution, organization, or system — not just serve within one."},
+{id:170,dim:"MOI",text:"Teaching — transmitting knowledge, skill, or perspective to others — is one of the most satisfying ways I can spend my time."},
+{id:171,dim:"MOI",text:"I want my work to involve physical service to others — cooking for people, building things for people, caring for people's bodies."},
+{id:172,dim:"MOI",text:"I am drawn to advocacy — using voice, platform, or position to change what's accepted and what's possible."},
+{id:173,dim:"MOI",text:"I want my work to involve direct care for people at their most vulnerable — in crisis, in illness, in transition."},
+{id:174,dim:"MOI",text:"I am motivated by operating within systems to make them work better — not replacing them, but improving them from the inside."},
+{id:175,dim:"MOI",text:"I want to create content, media, or stories that shape how people see the world."},
+{id:176,dim:"MOI",text:"The most satisfying version of impact for me would happen in my local community — the specific place I live — not at a national or global scale."},
+{id:177,dim:"MOI",text:"I want my work to involve solving problems at organizational or systemic scale — not individual cases but structural change."},
+{id:178,dim:"MOI",text:"I am fulfilled by work that involves serving a steady, consistent group of people over time — building long relationships, not managing transactions."},
+{id:179,dim:"MOI",text:"I want work that involves significant independence and self-direction rather than serving within someone else's structure."},
+{id:180,dim:"MOI",text:"The idea of working in a 'support role' — where my job is to make someone else or something else more effective — feels genuinely right to me."},
+{id:181,dim:"MOI",text:"I want my impact to be measurable — I want to be able to point to specific numbers, results, or outcomes I drove."},
+{id:182,dim:"MOI",text:"I am most fulfilled when I can put my hands on the work itself — not managing people who do it, but doing it myself."},
+
+// ── FLOW & ABSORPTION (18 questions) — embedded dimension for richer scoring ──
+{id:183,dim:"FLW",text:"There are certain kinds of tasks where I lose track of time completely — I forget to eat, I don't hear people around me."},
+{id:184,dim:"FLW",text:"I can think of at least one type of problem where, given time and the right conditions, I can work for hours without feeling drained."},
+{id:185,dim:"FLW",text:"When I'm fully engaged in the right kind of work, self-consciousness disappears — I'm not thinking about how I appear, just doing."},
+{id:186,dim:"FLW",text:"There is at least one type of activity where I consistently perform better than most people I know, and it feels relatively effortless."},
+{id:187,dim:"FLW",text:"I have a type of problem that I find myself returning to voluntarily — in free time, in conversations, in what I read."},
+{id:188,dim:"FLW",text:"When I'm doing the right kind of work, the challenge and my capability feel matched — I'm stretched but not overwhelmed."},
+{id:189,dim:"FLW",text:"I have experienced moments at work or in activity where time seemed to compress or expand in a way that doesn't happen in ordinary tasks."},
+{id:190,dim:"FLW",text:"There are skills I've developed without being asked to — things I pursued because they interested me, not because I needed to."},
+{id:191,dim:"FLW",text:"I have a subject or domain that I could talk about with genuine enthusiasm for hours, given the right audience."},
+{id:192,dim:"FLW",text:"When I'm doing work I'm genuinely wired for, I notice that I'm less aware of physical discomfort, hunger, or fatigue."},
+{id:193,dim:"FLW",text:"There is something I do well that people around me consistently notice and point out — even when I'm not trying to demonstrate it."},
+{id:194,dim:"FLW",text:"I find a certain type of complexity genuinely enjoyable rather than merely tolerable."},
+{id:195,dim:"FLW",text:"My childhood or teenage years had activities I returned to repeatedly out of genuine absorption — not because I was told to."},
+{id:196,dim:"FLW",text:"I notice that some kinds of hard work feel like play, while other kinds of easy work feel like a drain."},
+{id:197,dim:"FLW",text:"I have a point of view on something in my field of interest — not just knowledge, but an actual perspective others don't always share."},
+{id:198,dim:"FLW",text:"When I'm in the right conditions doing the right kind of work, I feel a kind of internal rightness — like this is what I was built for."},
+{id:199,dim:"FLW",text:"I find it difficult to fully switch off from certain subjects or types of problems — they follow me out of work."},
+{id:200,dim:"FLW",text:"If I'm honest, there is one type of contribution I believe I could make to the world that no one else could make in exactly the same way."},
+];
+
+const DIM_INFO = {
+  PM:  {name:"Purpose & Meaning", title:"Purpose & Meaning", sub:"These questions explore what gives your work meaning — and whether the deeper 'why' shapes how you show up every day. There are no right answers. A pragmatic person who scores low isn't lesser — they're honest."},
+  ENV: {name:"Environment",       title:"Your Environment",  sub:"Where and how you work matters as much as what you do. These questions surface the conditions in which you genuinely thrive."},
+  SKL: {name:"Skills",            title:"Natural Strengths", sub:"Think about what comes without effort — not what you've been trained to do, but what feels native to you. Skills you possess but don't enjoy also matter less than skills that energize you."},
+  INT: {name:"Interests",         title:"What Draws You In", sub:"The domains and subjects that hold your attention involuntarily. You don't have to be passionate — just honest about where your curiosity actually lives."},
+  WS:  {name:"Work Style",        title:"How You Work",      sub:"Your natural rhythm, your relationship to risk and leadership, and what gets you into your best gear. These tell us as much as any other dimension."},
+  VAL: {name:"Values",            title:"What Matters Most", sub:"What you'd protect even if it cost you something. Not what sounds admirable — but what you actually organize your decisions around."},
+  PER: {name:"Personality",       title:"How You're Wired",  sub:"How you relate to other people and move through the world. These aren't judgments — they're descriptions."},
+  MOI: {name:"Mode of Impact",    title:"How You Need to Give",  sub:"The most important dimension most assessments miss. Not just what you want to do, but how you need to do it — at what scale, with what visibility, through what kind of relationship."},
+  FLW: {name:"Flow & Absorption", title:"Where You Come Alive", sub:"The signals that your body and attention send about the work you were actually built for. These questions are about absorption, not ambition."},
+};
+
+const DIM_NAMES = {PM:"Purpose & Meaning",ENV:"Environment",SKL:"Skills",INT:"Interests",WS:"Work Style",VAL:"Values",PER:"Personality",MOI:"Mode of Impact",FLW:"Flow & Absorption"};
+const DIM_MULTI = {PM:2.2,ENV:0.8,SKL:1.0,INT:1.0,WS:0.9,VAL:1.2,PER:1.0,MOI:1.8,FLW:1.6};
+const DIM_ORDER = ['PM','ENV','SKL','INT','WS','VAL','PER','MOI','FLW'];
+
+// ═══════════════════════════════════
+// CAREERS — 62 profiles
+// ═══════════════════════════════════
+const CAREERS = [
+  // People & Care
+  {id:1,name:"Therapist / Counselor",cluster:"People & Care",weights:{PM:5,ENV:3,SKL:5,INT:4,WS:3,VAL:4,PER:5,MOI:4,FLW:4},salary:"$60K–$95K",growth:"High",type:"Direct service",summary:"You were made for this work — the patient, unhurried kind that happens in small rooms between two people, one of whom finally feels seen.",why:"Your empathy runs deep and you have the patience to hold space for someone's pain without trying to fix it prematurely. You are drawn to the root, not the symptom."},
+  {id:2,name:"Social Worker",cluster:"People & Care",weights:{PM:5,ENV:3,SKL:4,INT:5,WS:3,VAL:5,PER:5,MOI:5,FLW:4},salary:"$50K–$75K",growth:"High",type:"Direct service",summary:"You're drawn toward the margins — the people and places others pass by. Your strength is showing up there and refusing to leave.",why:"You hold a strong sense of justice and you're comfortable in difficult environments. You want to help at the root level, not at the surface."},
+  {id:3,name:"Life Coach",cluster:"People & Care",weights:{PM:5,ENV:4,SKL:4,INT:4,WS:4,VAL:4,PER:4,MOI:4,FLW:4},salary:"$50K–$100K",growth:"Medium",type:"1-on-1 development",summary:"You believe people are more capable than they think. Your role is to hold that belief for them until they can hold it for themselves.",why:"You're energized by individual transformation and thrive on autonomy. You want to go deep with people rather than wide across systems."},
+  {id:4,name:"School Counselor",cluster:"People & Care",weights:{PM:5,ENV:3,SKL:4,INT:4,WS:3,VAL:4,PER:5,MOI:4,FLW:3},salary:"$55K–$80K",growth:"Medium",type:"Youth development",summary:"You remember what it felt like to be young and uncertain. You want to be the person for others that you needed then.",why:"You love young people, you're patient, and you're built for the long relational work of being a steady presence in someone's formative years."},
+  {id:5,name:"Nurse",cluster:"People & Care",weights:{PM:5,ENV:3,SKL:4,INT:5,WS:3,VAL:4,PER:5,MOI:5,FLW:3},salary:"$70K–$110K",growth:"Very High",type:"Direct care",summary:"You want to be there in the hardest moments. Not on the sidelines — in the room, doing something that actually matters.",why:"You are wired for service under pressure. Physical presence with people in crisis is where you feel most purposeful, not most drained."},
+  {id:6,name:"Occupational Therapist",cluster:"People & Care",weights:{PM:4,ENV:3,SKL:4,INT:4,WS:3,VAL:4,PER:4,MOI:5,FLW:3},salary:"$80K–$110K",growth:"High",type:"Rehabilitation",summary:"You help people reclaim the ordinary things that make life worth living. That work is quieter than most — and more profound than most.",why:"You combine empathy with creativity and hands-on skill. The satisfaction of restoring independence to someone who lost it is something you understand deeply."},
+  {id:7,name:"Physical Therapist",cluster:"People & Care",weights:{PM:4,ENV:3,SKL:4,INT:4,WS:3,VAL:4,PER:4,MOI:5,FLW:3},salary:"$80K–$110K",growth:"High",type:"Rehabilitation",summary:"You understand the body — and the slow, patient work of restoring what was lost.",why:"You need to see tangible physical progress. Working directly with the body, tracking real results, and building relationships with patients over time fits how you're wired."},
+
+  // Education & Development
+  {id:8,name:"Teacher / Educator",cluster:"Education & Development",weights:{PM:5,ENV:3,SKL:5,INT:4,WS:3,VAL:4,PER:5,MOI:4,FLW:4},salary:"$45K–$80K",growth:"Stable",type:"Direct instruction",summary:"You light up when someone finally understands something. That moment — that's what you were made for.",why:"You have a gift for explanation, you care about young people, and you find genuine meaning in the relational work of education. The financial tradeoff feels worth it to you."},
+  {id:9,name:"Corporate Trainer / L&D",cluster:"Education & Development",weights:{PM:3,ENV:3,SKL:4,INT:3,WS:3,VAL:3,PER:4,MOI:4,FLW:3},salary:"$60K–$100K",growth:"Medium",type:"Adult learning",summary:"You come alive in front of a room. You want to help adults grow — inside the organizations they're already part of.",why:"You love facilitating learning and you're effective in front of groups. You prefer working within institutions to building your own."},
+  {id:10,name:"Curriculum Developer",cluster:"Education & Development",weights:{PM:4,ENV:4,SKL:4,INT:3,WS:3,VAL:3,PER:3,MOI:3,FLW:4},salary:"$55K–$90K",growth:"Medium",type:"Design & strategy",summary:"You want to shape how people learn at scale — quietly, from behind the scenes, with lasting effect.",why:"You think systemically about learning, prefer independent work, and are energized by design problems rather than direct instruction."},
+  {id:11,name:"Professor / Academic",cluster:"Education & Development",weights:{PM:4,ENV:4,SKL:5,INT:4,WS:3,VAL:4,PER:3,MOI:3,FLW:5},salary:"$70K–$130K",growth:"Low",type:"Research + instruction",summary:"You want to live at the frontier of what's known — and bring others there with you.",why:"Deep intellectual engagement, long autonomy over your work, and the satisfaction of both discovering and transmitting knowledge are what you're wired for."},
+
+  // Nonprofit, Ministry & Social Change
+  {id:12,name:"Nonprofit Program Director",cluster:"Nonprofit & Ministry",weights:{PM:5,ENV:3,SKL:4,INT:5,WS:4,VAL:5,PER:4,MOI:4,FLW:3},salary:"$55K–$90K",growth:"Medium",type:"Mission-driven leadership",summary:"You want to build something that serves people — not for recognition, but because the work matters and someone has to do it well.",why:"You have the organizational instinct and the mission conviction to lead programs that actually change lives. Financial tradeoffs don't shake your commitment."},
+  {id:13,name:"Executive Director of Nonprofit",cluster:"Nonprofit & Ministry",weights:{PM:5,ENV:5,SKL:5,INT:5,WS:5,VAL:5,PER:5,MOI:5,FLW:4},salary:"$70K–$130K",growth:"Medium",type:"Executive leadership",summary:"You want to lead something that matters — and carry it with enough conviction that others follow.",why:"You have the combination of leadership capacity, mission conviction, organizational skill, and resilience to carry an entire organization's vision."},
+  {id:14,name:"Pastor / Chaplain",cluster:"Nonprofit & Ministry",weights:{PM:5,ENV:5,SKL:5,INT:5,WS:5,VAL:5,PER:5,MOI:5,FLW:4},salary:"$40K–$90K",growth:"Stable",type:"Spiritual leadership",summary:"There is something in you that was made for the sacred work of walking alongside people in their most human moments.",why:"You are called to spiritual community, long relational investment, and the particular work of helping people orient their lives. Financial considerations genuinely come second."},
+  {id:15,name:"Community Organizer",cluster:"Nonprofit & Ministry",weights:{PM:5,ENV:4,SKL:4,INT:5,WS:4,VAL:5,PER:4,MOI:4,FLW:3},salary:"$40K–$70K",growth:"Medium",type:"Grassroots leadership",summary:"You believe change starts with people, not programs. You're wired to convene, motivate, and mobilize.",why:"You have a justice orientation, relational skill, and the ability to sustain energy in difficult, slow-moving work."},
+  {id:16,name:"Mental Health Advocate",cluster:"Nonprofit & Ministry",weights:{PM:5,ENV:4,SKL:4,INT:5,WS:3,VAL:5,PER:5,MOI:4,FLW:3},salary:"$40K–$75K",growth:"High",type:"Advocacy + awareness",summary:"Something personal brought you to this work. You want to use your voice to make it easier for those who come after you.",why:"You have both empathy and advocacy instinct — you want to change systems, not just serve within them."},
+
+  // Business & Strategy
+  {id:17,name:"Entrepreneur / Founder",cluster:"Business & Strategy",weights:{PM:4,ENV:5,SKL:4,INT:5,WS:5,VAL:5,PER:5,MOI:5,FLW:5},salary:"$0–$500K+",growth:"High risk/reward",type:"Ownership + build",summary:"The constraints of someone else's vision feel like a cage to you. You need to build something that's yours.",why:"You have high tolerance for ambiguity, strong initiative, and the drive to build rather than maintain. Financial uncertainty doesn't deter you because ownership is worth more."},
+  {id:18,name:"Product Manager",cluster:"Business & Strategy",weights:{PM:3,ENV:4,SKL:4,INT:4,WS:4,VAL:3,PER:4,MOI:3,FLW:4},salary:"$90K–$160K",growth:"High",type:"Strategy + coordination",summary:"You love being the translator — between what people need and what technology can do.",why:"You think analytically and empathetically simultaneously. You thrive at the intersection of strategy, user experience, and execution."},
+  {id:19,name:"Operations Manager",cluster:"Business & Strategy",weights:{PM:2,ENV:3,SKL:4,INT:3,WS:3,VAL:3,PER:3,MOI:3,FLW:4},salary:"$70K–$120K",growth:"Stable",type:"Systems + execution",summary:"Most people don't notice when operations work well. You do — and that invisible excellence is exactly where you live.",why:"You are a natural systems thinker who finds deep satisfaction in making complex things run smoothly. You're content being behind the scenes."},
+  {id:20,name:"Business Consultant",cluster:"Business & Strategy",weights:{PM:3,ENV:4,SKL:4,INT:3,WS:4,VAL:3,PER:4,MOI:3,FLW:4},salary:"$80K–$180K",growth:"High",type:"Advisory",summary:"You love parachuting into a problem, figuring it out, and moving on. Variety isn't a distraction — it's what keeps you sharp.",why:"You think analytically, adapt quickly to new environments, and are comfortable making recommendations under uncertainty."},
+  {id:21,name:"Sales Director",cluster:"Business & Strategy",weights:{PM:2,ENV:4,SKL:4,INT:3,WS:4,VAL:3,PER:4,MOI:3,FLW:3},salary:"$100K–$250K",growth:"Stable",type:"Revenue + relationships",summary:"You are energized by the chase. You were built for high-stakes environments where results speak.",why:"You are competitive, persuasive, and driven by financial reward. You prefer the measurable clarity of sales over the ambiguity of most roles."},
+  {id:22,name:"Financial Advisor",cluster:"Business & Strategy",weights:{PM:3,ENV:3,SKL:4,INT:3,WS:3,VAL:3,PER:3,MOI:4,FLW:3},salary:"$70K–$150K",growth:"Stable",type:"Relationship + expertise",summary:"You understand money in a way most people don't — and you want to use that to help people build futures they can actually live in.",why:"You combine analytical skill with relational patience. You're satisfied building long-term client relationships based on genuine expertise."},
+  {id:23,name:"Human Resources Manager",cluster:"Business & Strategy",weights:{PM:3,ENV:3,SKL:4,INT:3,WS:3,VAL:3,PER:4,MOI:3,FLW:3},salary:"$70K–$120K",growth:"Stable",type:"People + culture",summary:"You care about how people are treated inside institutions — and you have the patience to change culture from within.",why:"You want to serve people inside organizations without necessarily leading them. You value fairness and believe in the power of good culture."},
+
+  // Creative & Communication
+  {id:24,name:"Journalist / Writer",cluster:"Creative & Communication",weights:{PM:4,ENV:4,SKL:4,INT:4,WS:3,VAL:4,PER:4,MOI:4,FLW:5},salary:"$40K–$90K",growth:"Declining/shifting",type:"Words + truth",summary:"Truth matters to you — and you want to use language to make people see things they couldn't see before.",why:"You are wired for deep research, honest observation, and the patient craft of writing. You are willing to accept lower pay for work that feels genuinely important."},
+  {id:25,name:"Content Creator",cluster:"Creative & Communication",weights:{PM:3,ENV:5,SKL:4,INT:4,WS:4,VAL:4,PER:4,MOI:4,FLW:5},salary:"$30K–$300K+",growth:"High",type:"Audience + creation",summary:"You have something worth saying and the patience to build an audience around it.",why:"You need creative autonomy and are comfortable with the uncertainty of building an audience. You'd rather own the work than execute someone else's."},
+  {id:26,name:"Marketing Manager",cluster:"Creative & Communication",weights:{PM:3,ENV:3,SKL:4,INT:4,WS:3,VAL:3,PER:4,MOI:3,FLW:4},salary:"$70K–$130K",growth:"Stable",type:"Strategy + creativity",summary:"You think in stories before you think in strategies. You understand why people do what they do.",why:"You combine creative instinct with analytical thinking. You want to shape perception at scale without necessarily being the public face."},
+  {id:27,name:"Brand Strategist",cluster:"Creative & Communication",weights:{PM:3,ENV:3,SKL:4,INT:4,WS:3,VAL:3,PER:4,MOI:4,FLW:4},salary:"$70K–$140K",growth:"Stable",type:"Strategy + identity",summary:"You understand how perception shapes reality. You want to help organizations tell the truest version of who they are.",why:"You think both creatively and strategically. You want to work on the identity level, not just the execution level."},
+  {id:28,name:"Podcast Host",cluster:"Creative & Communication",weights:{PM:3,ENV:4,SKL:4,INT:4,WS:3,VAL:4,PER:4,MOI:4,FLW:5},salary:"$20K–$200K+",growth:"High",type:"Conversation + platform",summary:"You draw people out. In a good conversation, you find truth — and you want to share that with the world.",why:"You love deep conversation, have a genuine point of view, and are patient enough to build an audience over time."},
+  {id:29,name:"Graphic Designer",cluster:"Creative & Communication",weights:{PM:2,ENV:4,SKL:4,INT:3,WS:3,VAL:4,PER:3,MOI:3,FLW:5},salary:"$50K–$95K",growth:"Stable",type:"Visual creation",summary:"You see things others don't — and you have the rare ability to make that visible.",why:"Your visual thinking is native, not learned. You prefer independent work with creative latitude and care about craft over recognition."},
+  {id:30,name:"Filmmaker / Videographer",cluster:"Creative & Communication",weights:{PM:3,ENV:3,SKL:4,INT:4,WS:3,VAL:4,PER:3,MOI:4,FLW:5},salary:"$45K–$120K",growth:"Stable",type:"Visual storytelling",summary:"You think in images and motion. You feel the power of a single frame.",why:"Visual storytelling comes naturally to you and you are energized by the collaborative-yet-independent work of filmmaking."},
+
+  // Technology
+  {id:31,name:"Software Engineer",cluster:"Technology",weights:{PM:2,ENV:4,SKL:5,INT:3,WS:4,VAL:3,PER:3,MOI:3,FLW:5},salary:"$100K–$200K+",growth:"Very High",type:"Building + problem-solving",summary:"There is satisfaction in making something that actually works — and you want to spend your career inside that satisfaction.",why:"You are wired for logical problem-solving, enjoy independent deep work, and are comfortable with financial reward as a primary motivator."},
+  {id:32,name:"UX Designer",cluster:"Technology",weights:{PM:3,ENV:3,SKL:4,INT:4,WS:3,VAL:3,PER:3,MOI:4,FLW:5},salary:"$80K–$140K",growth:"High",type:"Human-centered design",summary:"You believe technology should feel human. You're the one in the room asking what it's like to be the person using this.",why:"You sit at the intersection of empathy and analytical thinking. You care about how people experience things and have the technical vocabulary to act on it."},
+  {id:33,name:"Data Analyst",cluster:"Technology",weights:{PM:2,ENV:3,SKL:5,INT:3,WS:4,VAL:3,PER:2,MOI:3,FLW:5},salary:"$70K–$120K",growth:"High",type:"Patterns + insights",summary:"You see patterns where others see noise. Making sense of complexity is not just something you're good at — it's something you genuinely enjoy.",why:"You are analytically wired, comfortable working independently, and find deep satisfaction in the moment a pattern becomes clear."},
+  {id:34,name:"AI / ML Engineer",cluster:"Technology",weights:{PM:3,ENV:4,SKL:5,INT:3,WS:4,VAL:3,PER:3,MOI:3,FLW:5},salary:"$130K–$300K+",growth:"Very High",type:"Research + build",summary:"You are working on something that could change everything. The complexity doesn't intimidate you — it's what makes this worth doing.",why:"You have the technical depth, intellectual curiosity, and tolerance for ambiguity to work at the frontier of a genuinely consequential field."},
+  {id:35,name:"Cybersecurity Analyst",cluster:"Technology",weights:{PM:2,ENV:3,SKL:5,INT:3,WS:4,VAL:3,PER:3,MOI:3,FLW:4},salary:"$90K–$160K",growth:"Very High",type:"Defense + investigation",summary:"You think like an adversary. You find the weak spot before someone else does.",why:"You are analytically rigorous, detail-oriented, and motivated by the mission of protecting what others have built."},
+  {id:36,name:"Product Designer",cluster:"Technology",weights:{PM:3,ENV:3,SKL:4,INT:4,WS:3,VAL:3,PER:3,MOI:4,FLW:5},salary:"$90K–$160K",growth:"High",type:"Visual + functional design",summary:"You see the gap between how something works and how it should feel — and you can close it.",why:"You think visually and care about the user's experience at a level that goes beyond aesthetics into genuine empathy."},
+
+  // Law, Policy & Civic Life
+  {id:37,name:"Lawyer / Attorney",cluster:"Law & Policy",weights:{PM:4,ENV:3,SKL:5,INT:4,WS:4,VAL:4,PER:5,MOI:4,FLW:4},salary:"$80K–$200K+",growth:"Stable",type:"Advocacy + rigor",summary:"You think in arguments. You're drawn to high-stakes environments where rigor and preparation are the difference.",why:"You have strong conviction, high analytical capacity, and the competitive instinct that makes for effective advocacy."},
+  {id:38,name:"Policy Analyst",cluster:"Law & Policy",weights:{PM:5,ENV:3,SKL:4,INT:5,WS:3,VAL:5,PER:4,MOI:4,FLW:4},salary:"$60K–$110K",growth:"Stable",type:"Research + influence",summary:"You understand that the biggest levers for change aren't in individual stories — they're in the systems that shape millions of them.",why:"You are motivated by systemic change, intellectually rigorous, and comfortable with the slow, unsexy work of policy research."},
+  {id:39,name:"Government Official",cluster:"Law & Policy",weights:{PM:4,ENV:3,SKL:4,INT:4,WS:4,VAL:4,PER:4,MOI:4,FLW:3},salary:"$60K–$130K",growth:"Stable",type:"Public service",summary:"Public service is a calling, not a career. You want to use institutional power to actually serve the people it was meant to serve.",why:"You have a conviction for public good and the resilience to operate in political environments without losing your values."},
+  {id:40,name:"Judge",cluster:"Law & Policy",weights:{PM:5,ENV:3,SKL:5,INT:4,WS:4,VAL:5,PER:4,MOI:4,FLW:3},salary:"$130K–$220K",growth:"Stable",type:"Adjudication",summary:"You want to be the last word in a room where the stakes are as high as they get.",why:"You have the temperament to carry consequential decisions with equanimity, high analytical capacity, and a deep commitment to integrity."},
+
+  // Healthcare & Science
+  {id:41,name:"Physician / Doctor",cluster:"Healthcare & Science",weights:{PM:4,ENV:3,SKL:5,INT:4,WS:4,VAL:4,PER:4,MOI:5,FLW:4},salary:"$200K–$400K+",growth:"High",type:"Direct care + expertise",summary:"You are willing to give years to mastery because you understand that the stakes are worth it.",why:"You combine intellectual depth, empathy, and the willingness to carry real responsibility for human outcomes."},
+  {id:42,name:"Nutritionist / Dietitian",cluster:"Healthcare & Science",weights:{PM:4,ENV:3,SKL:4,INT:5,WS:3,VAL:3,PER:4,MOI:4,FLW:3},salary:"$60K–$90K",growth:"High",type:"Education + direct care",summary:"You believe the body knows how to thrive when it's given what it needs. You want to help people discover that for themselves.",why:"You are knowledgeable about health, patient with the slow work of behavior change, and want tangible impact on how people care for themselves."},
+  {id:43,name:"Researcher / Scientist",cluster:"Healthcare & Science",weights:{PM:4,ENV:4,SKL:5,INT:4,WS:3,VAL:4,PER:3,MOI:3,FLW:5},salary:"$70K–$130K",growth:"Stable",type:"Discovery",summary:"Questions matter more to you than answers. You want to spend your life at the edge of what is known.",why:"You are intrinsically motivated by discovery, comfortable with long cycles before results, and energized by intellectual difficulty."},
+  {id:44,name:"Personal Trainer",cluster:"Healthcare & Science",weights:{PM:3,ENV:3,SKL:3,INT:4,WS:3,VAL:3,PER:4,MOI:4,FLW:3},salary:"$40K–$80K",growth:"Medium",type:"Physical coaching",summary:"You know what it takes to change — and you want to walk alongside people through that process.",why:"You are physically oriented, naturally motivating, and find satisfaction in the tangible progress of others."},
+
+  // Built Environment
+  {id:45,name:"Architect",cluster:"Built Environment",weights:{PM:3,ENV:3,SKL:4,INT:4,WS:4,VAL:4,PER:3,MOI:4,FLW:5},salary:"$75K–$140K",growth:"Stable",type:"Design + oversight",summary:"You think about how people will feel in a space before it exists. That's not just design — it's a form of care.",why:"You think both creatively and technically and are motivated by how physical space shapes human experience."},
+  {id:46,name:"Civil Engineer",cluster:"Built Environment",weights:{PM:3,ENV:3,SKL:5,INT:3,WS:3,VAL:3,PER:3,MOI:3,FLW:4},salary:"$80K–$130K",growth:"Stable",type:"Technical design",summary:"You want to build things that are still standing when you're gone.",why:"You are analytically rigorous, technically capable, and motivated by the permanence of infrastructure."},
+  {id:47,name:"Construction Manager",cluster:"Built Environment",weights:{PM:2,ENV:3,SKL:4,INT:3,WS:4,VAL:3,PER:3,MOI:4,FLW:3},salary:"$80K–$140K",growth:"High",type:"Field leadership",summary:"You're happiest when something tangible is being built and you're the one making sure it happens on time.",why:"You are physically oriented, strong at logistics, and satisfied by the visible progress of a construction project."},
+  {id:48,name:"Urban Planner",cluster:"Built Environment",weights:{PM:4,ENV:3,SKL:4,INT:4,WS:3,VAL:4,PER:3,MOI:4,FLW:3},salary:"$70K–$110K",growth:"Stable",type:"Systems + community",summary:"You think about the city as a living thing — and you want to shape it so it serves everyone who lives inside it.",why:"You hold both analytical rigor and genuine care for how policy affects real people in real neighborhoods."},
+
+  // Food, Hospitality & Service
+  {id:49,name:"Chef / Culinary Professional",cluster:"Food & Hospitality",weights:{PM:3,ENV:3,SKL:3,INT:4,WS:3,VAL:3,PER:3,MOI:5,FLW:5},salary:"$35K–$90K",growth:"Stable",type:"Craft + service",summary:"The satisfaction of feeding people — of making something with your hands that becomes someone else's good experience — is something you understand intuitively.",why:"You need tangible, physical work with immediate feedback and find genuine meaning in serving people through craft."},
+  {id:50,name:"Restaurant / Kitchen Worker",cluster:"Food & Hospitality",weights:{PM:2,ENV:3,SKL:2,INT:3,WS:2,VAL:2,PER:3,MOI:5,FLW:3},salary:"$30K–$55K",growth:"Stable",type:"Behind-the-scenes service",summary:"You love serving people through the honest, physical work of preparing and delivering food. The behind-the-scenes nature of it suits you.",why:"You need tangible work, prefer supporting over spotlighting, and find meaning in being part of an experience someone else remembers."},
+  {id:51,name:"Event Coordinator",cluster:"Food & Hospitality",weights:{PM:2,ENV:3,SKL:4,INT:3,WS:3,VAL:3,PER:4,MOI:4,FLW:3},salary:"$45K–$80K",growth:"Stable",type:"Coordination + service",summary:"You are energized by making complex things feel seamless for the people experiencing them.",why:"You think in logistics, love the energy of event environments, and are motivated by the experience of others."},
+
+  // Trades & Skilled Work
+  {id:52,name:"Electrician / Plumber / Skilled Trade",cluster:"Trades & Skilled Work",weights:{PM:2,ENV:3,SKL:4,INT:3,WS:3,VAL:3,PER:3,MOI:4,FLW:4},salary:"$55K–$95K",growth:"High",type:"Hands-on technical",summary:"You like solving problems you can see and touch, with results you can verify. The trades give you that in abundance.",why:"You are physically oriented, technically capable, and find meaning in the tangible work of keeping things functional."},
+  {id:53,name:"Carpenter / Craftsperson",cluster:"Trades & Skilled Work",weights:{PM:3,ENV:3,SKL:4,INT:3,WS:3,VAL:3,PER:3,MOI:4,FLW:5},salary:"$45K–$85K",growth:"Stable",type:"Craft + creation",summary:"You make things that last. The combination of physical skill, creative problem-solving, and tangible results is where you come alive.",why:"You have a strong craft orientation and need to see and touch the result of your work. Creating physical objects carries meaning for you."},
+
+  // Education & Youth (specific)
+  {id:54,name:"Youth Minister / Youth Worker",cluster:"Nonprofit & Ministry",weights:{PM:5,ENV:4,SKL:4,INT:4,WS:4,VAL:5,PER:5,MOI:4,FLW:4},salary:"$35K–$65K",growth:"Stable",type:"Formation + community",summary:"You light up around young people. You want to be a stable, honest presence in their lives at the exact moment when it matters most.",why:"You combine genuine love for youth with patience, relational skill, and mission conviction. Financial sacrifice feels right given the stakes."},
+  {id:55,name:"Tutor / Learning Specialist",cluster:"Education & Development",weights:{PM:4,ENV:4,SKL:4,INT:3,WS:3,VAL:3,PER:4,MOI:5,FLW:4},salary:"$40K–$80K",growth:"Medium",type:"1-on-1 instruction",summary:"You want to work with one student at a time, going deep on their specific struggle, and watching the understanding arrive.",why:"You prefer the intimacy of 1-on-1 instruction over classroom teaching. Individual transformation is more satisfying to you than scalable impact."},
+
+  // Media & Storytelling
+  {id:56,name:"Documentary Filmmaker",cluster:"Creative & Communication",weights:{PM:4,ENV:3,SKL:4,INT:4,WS:3,VAL:4,PER:3,MOI:4,FLW:5},salary:"$40K–$100K",growth:"Stable",type:"Truth + visual story",summary:"You believe some truths can only be told visually. You are patient, curious, and willing to spend years on what matters.",why:"You combine investigative instinct, visual thinking, and the patience to pursue a story until it becomes something real."},
+  {id:57,name:"Copywriter / Content Strategist",cluster:"Creative & Communication",weights:{PM:2,ENV:4,SKL:4,INT:3,WS:3,VAL:3,PER:3,MOI:3,FLW:5},salary:"$55K–$100K",growth:"Stable",type:"Words + strategy",summary:"Words are your tools. You know exactly when a sentence lands — and you can make it land again on demand.",why:"You have strong writing instincts, prefer independent work, and are satisfied turning ideas into language that moves people."},
+
+  // Human Services (broader)
+  {id:58,name:"Marriage & Family Therapist",cluster:"People & Care",weights:{PM:5,ENV:3,SKL:5,INT:4,WS:4,VAL:4,PER:5,MOI:4,FLW:4},salary:"$60K–$100K",growth:"High",type:"Relational therapy",summary:"You believe the family unit is worth fighting for. You have the patience to sit in the hardest rooms.",why:"You hold strong convictions about the importance of family and you have the emotional resilience to stay present when things are hard."},
+  {id:59,name:"Crisis Counselor / Hotline Worker",cluster:"People & Care",weights:{PM:5,ENV:3,SKL:4,INT:4,WS:3,VAL:5,PER:5,MOI:5,FLW:3},salary:"$35K–$65K",growth:"High",type:"Immediate intervention",summary:"You are calm in crisis. When someone is at their lowest, you can be fully present without being overwhelmed.",why:"You have the rare ability to regulate your own emotions while holding space for someone else's emergency. That is a specific calling."},
+  {id:60,name:"Case Manager",cluster:"People & Care",weights:{PM:5,ENV:3,SKL:4,INT:4,WS:3,VAL:4,PER:4,MOI:4,FLW:3},salary:"$45K–$75K",growth:"High",type:"Coordination + advocacy",summary:"You are the person who makes sure the system actually serves the person — not the other way around.",why:"You are organized, patient with bureaucracy, and motivated by the real-world outcomes of specific individuals."},
+  {id:61,name:"Chaplain (Hospital / Military / Prison)",cluster:"Nonprofit & Ministry",weights:{PM:5,ENV:3,SKL:4,INT:4,WS:3,VAL:5,PER:5,MOI:5,FLW:4},salary:"$45K–$90K",growth:"Stable",type:"Spiritual care",summary:"You are called to walk with people in the most extreme human moments — illness, combat, incarceration — and bring presence and peace.",why:"You have spiritual depth, emotional resilience, and the capacity to offer comfort to people whose circumstances you cannot fix."},
+  {id:62,name:"Career Counselor / Advisor",cluster:"People & Care",weights:{PM:5,ENV:3,SKL:4,INT:3,WS:3,VAL:4,PER:4,MOI:4,FLW:4},salary:"$55K–$90K",growth:"Stable",type:"Guidance + clarity",summary:"You believe everyone deserves clarity about who they are and where they should go. You want to be the person who helps them find it.",why:"You are patient, curious about people, and find deep satisfaction when someone moves from confusion to direction because of a conversation with you."},
+];
+
+// ═══════════════════════════════════
+// JOBS EXPLORER DATA
+// ═══════════════════════════════════
+const CLUSTERS = [
+  {id:"People & Care",desc:"Roles built around serving, supporting, and directly helping people navigate their lives. High meaning, strong community, variable pay."},
+  {id:"Education & Development",desc:"Teaching, learning design, and human development. If you're wired to help others grow, this is your cluster."},
+  {id:"Nonprofit & Ministry",desc:"Mission-driven work in organizations that prioritize impact over profit. Often involves leading communities, programs, or spiritual formation."},
+  {id:"Business & Strategy",desc:"Building, scaling, and operating organizations and enterprises. High skill variety, often high compensation, usually inside institutions or markets."},
+  {id:"Creative & Communication",desc:"Using language, image, and narrative to move, inform, and shape how people understand the world."},
+  {id:"Technology",desc:"Building the digital infrastructure of the world. High demand, high pay, increasingly accessible. Rewards analytical depth."},
+  {id:"Law & Policy",desc:"Operating inside the systems that govern how society works. Requires rigor, conviction, and the patience for complex slow-moving processes."},
+  {id:"Healthcare & Science",desc:"Caring for bodies, discovering truth, and extending what medicine and science can do. High stakes, high meaning, often high barriers to entry."},
+  {id:"Built Environment",desc:"Designing and constructing the physical world — buildings, cities, infrastructure. Where creative and technical thinking meet."},
+  {id:"Food & Hospitality",desc:"Serving people through physical craft, presence, and the experience of food and place. Tangible, relational, often undervalued."},
+  {id:"Trades & Skilled Work",desc:"Hands-on technical work that keeps the physical world functional. High demand, increasingly well-paid, deeply satisfying for the right person."},
+];
+
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+let userName='', userEmail='', qIndex=0, answers={}, animating=false;
+
+// ═══════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════
+function navigate(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  // Show/hide global nav
+  const hideNav = ['assessment','onboarding'];
+  document.getElementById('global-nav').style.display = hideNav.includes(id) ? 'none' : '';
+  window.scrollTo(0,0);
+  if(id==='jobs') renderJobs();
+  // mark active nav
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const map={jobs:'Explore Careers',nextsteps:'Next Steps',about:'About'};
+  if(map[id]) document.querySelectorAll('.nav-link').forEach(l=>{if(l.textContent===map[id])l.classList.add('active');});
+}
+
+function showScreen(id){navigate(id);}
+
+// ═══════════════════════════════════
+// ASSESSMENT
+// ═══════════════════════════════════
+function startAssessment(){
+  const n=document.getElementById('inp-name').value.trim();
+  const e=document.getElementById('inp-email').value.trim();
+  if(!n||!e){alert('Please enter your name and email.');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){alert('Please enter a valid email.');return;}
+  userName=n;userEmail=e;qIndex=0;answers={};
+  navigate('assessment');
+  renderQ(true);
+}
+
+function renderQ(instant){
+  const q=QUESTIONS[qIndex];
+  const prevDim=qIndex>0?QUESTIONS[qIndex-1].dim:null;
+  const newDim=qIndex===0||q.dim!==prevDim;
+  document.getElementById('prog-fill').style.width=Math.round((qIndex/QUESTIONS.length)*100)+'%';
+  document.getElementById('prog-dim').textContent=DIM_INFO[q.dim].name;
+  document.getElementById('q-counter').textContent=(qIndex+1)+' / '+QUESTIONS.length;
+  const back=document.getElementById('btn-back');
+  qIndex>0?back.classList.add('visible'):back.classList.remove('visible');
+  if(newDim&&qIndex>0&&!instant){showDimTransition(q.dim,()=>renderQContent(q));}
+  else{renderQContent(q,instant);}
+}
+
+function renderQContent(q,instant){
+  const stage=document.getElementById('q-stage');
+  stage.classList.remove('visible');
+  document.getElementById('q-dim-label').textContent=DIM_INFO[q.dim].name;
+  document.getElementById('q-text').textContent=q.text;
+  const btns=document.getElementById('scale-btns');
+  btns.innerHTML='';
+  [1,2,3,4,5].forEach(v=>{
+    const b=document.createElement('button');
+    b.className='scale-btn'+(answers[q.id]===v?' selected':'');
+    b.dataset.v=v;
+    b.setAttribute('aria-label',v+' of 5');
+    b.addEventListener('click',()=>pick(q.id,v));
+    btns.appendChild(b);
+  });
+  setTimeout(()=>stage.classList.add('visible'),instant?0:60);
+}
+
+function pick(qid,val){
+  if(animating)return;
+  answers[qid]=val;
+  document.querySelectorAll('.scale-btn').forEach(b=>b.classList.toggle('selected',parseInt(b.dataset.v)===val));
+  animating=true;
+  setTimeout(()=>{
+    animating=false;
+    if(qIndex<QUESTIONS.length-1){
+      qIndex++;
+      const stage=document.getElementById('q-stage');
+      stage.classList.remove('visible');
+      setTimeout(()=>renderQ(false),280);
+    } else {
+      computeAndShowResults();
+    }
+  },400);
+}
+
+function prevQ(){
+  if(qIndex===0)return;
+  qIndex--;
+  const stage=document.getElementById('q-stage');
+  stage.classList.remove('visible');
+  setTimeout(()=>renderQ(false),280);
+}
+
+function showDimTransition(dim,cb){
+  const info=DIM_INFO[dim];
+  const ov=document.getElementById('sec-transition');
+  document.getElementById('st-label').textContent='Next section';
+  document.getElementById('st-title').textContent=info.title;
+  document.getElementById('st-sub').textContent=info.sub;
+  ov.classList.add('show');
+  setTimeout(()=>{ov.classList.remove('show');setTimeout(cb,400);},2400);
+}
+
+// ═══════════════════════════════════
+// SCORING
+// ═══════════════════════════════════
+function getDimScores(){
+  const b={PM:[],ENV:[],SKL:[],INT:[],WS:[],VAL:[],PER:[],MOI:[],FLW:[]};
+  QUESTIONS.forEach(q=>{if(answers[q.id])b[q.dim].push(answers[q.id]);});
+  const s={};
+  for(const d in b)s[d]=b[d].length?b[d].reduce((a,x)=>a+x,0)/b[d].length:3;
+  return s;
+}
+
+function scoreCareer(c,ds){
+  let tot=0,max=0;
+  for(const d in c.weights){
+    const cv=c.weights[d],uv=ds[d]||3;
+    const m=(5-Math.abs(cv-uv))/5;
+    const mult=DIM_MULTI[d]||1;
+    tot+=m*cv*mult; max+=cv*mult;
+  }
+  return max>0?(tot/max)*100:0;
+}
+
+// ═══════════════════════════════════
+// PORTRAIT GENERATION
+// ═══════════════════════════════════
+function generatePortrait(ds, topCareer) {
+  const pmHigh = ds.PM >= 3.8;
+  const pmLow = ds.PM < 2.8;
+  const envIndependent = ds.ENV >= 3.5;
+  const sklComm = (answers[48]||3) >= 4 || (answers[56]||3) >= 4;
+  const sklAnalytic = (answers[49]||3) >= 4 || (answers[50]||3) >= 4;
+  const sklEmpathy = (answers[51]||3) >= 4;
+  const valBalance = (answers[120]||3) >= 4;
+  const valOwnership = (answers[124]||3) >= 4;
+  const perIntrovert = (answers[140]||3) >= 3.5;
+  const moiScale = (answers[162]||3) >= 4;
+  const moiDirect = (answers[164]||3) >= 4;
+  const moiBackstage = (answers[168]||3) >= 4;
+  const moiBuild = (answers[169]||3) >= 4;
+  const flwHigh = ds.FLW >= 3.8;
+
+  let para1 = '';
+  let para2 = '';
+  let para3 = '';
+
+  if(pmHigh){
+    para1 = `${userName}, you are someone for whom work is never just a transaction. The data across your Purpose & Meaning responses is consistent: you need to feel that what you're doing matters, and you are willing to pay real costs — financial, positional, social — to stay in work that aligns with your convictions. This isn't performative idealism. It shows up repeatedly in how you weighed trade-offs.`;
+  } else if(pmLow){
+    para1 = `${userName}, your responses suggest that you are a pragmatic realist — and that is a genuine strength. You don't need your work to feel transcendent to feel satisfied. What matters to you is doing excellent work, doing it in the right conditions, and having enough margin left for the life you're actually trying to live. This is honest and it's healthy. Your results will reflect this clearly.`;
+  } else {
+    para1 = `${userName}, your responses suggest a balanced relationship between purpose and pragmatism. You care about meaning — it shows — but you also have a clear-eyed understanding that work exists in a real world with real constraints. You're not dismissive of idealism, but you're not willing to sacrifice everything for it either. That combination tends to produce people who are effective rather than just earnest.`;
+  }
+
+  if(moiBackstage && !moiScale){
+    para2 = `One of the most revealing signals in your responses is how you answered questions about visibility and recognition. Consistently, you indicated preference for the behind-the-scenes role — contributing to something larger without needing to be its face. This is not a weakness or a lack of confidence. It's a specific wiring that produces some of the most essential contributors in any organization or mission. The best supporting roles, production roles, and operational roles belong to people with exactly this orientation.`;
+  } else if(moiBuild){
+    para2 = `Across your Mode of Impact responses, a clear pattern emerges: you want to build, not maintain. You are oriented toward creation and ownership — the particular satisfaction of making something exist that didn't before. This points strongly toward entrepreneurial contexts, founding roles, or positions where you have real creative and strategic authority rather than serving inside someone else's fully-formed vision.`;
+  } else if(moiDirect){
+    para2 = `Your responses suggest that what satisfies you most is direct, one-to-one impact — the kind where you can see clearly that your presence made a difference to a specific person. Scale for its own sake holds less appeal than depth. You want to know the names of the people you serve. This is a specific and valuable kind of orientation, and it points toward roles built around individual relationships rather than programs or platforms.`;
+  } else if(moiScale){
+    para2 = `You are wired for impact at scale. Your responses show a consistent preference for reaching many people over going deep with few — through media, teaching, platform, or systems. This is not shallowness; it's a specific calling toward influence at breadth. The best teachers, communicators, writers, and platform-builders are people who are genuinely satisfied knowing that what they make is reaching more people than they could ever meet.`;
+  } else {
+    para2 = `Your Mode of Impact responses are mixed — which may mean you haven't fully settled on how you want to give. That's normal. Pay close attention to your top career match in that context: what kind of impact does that role actually produce, and does it feel right when you imagine yourself in it?`;
+  }
+
+  if(flwHigh){
+    para3 = `Finally, your Flow & Absorption responses suggest that there is at least one domain where you come alive in a specific way — where time disappears, where the challenge and your capability meet, where the work feels less like effort and more like expression. That signal is worth taking seriously. It's often the clearest indicator of what you were actually built for, and it's the signal that career tests most often fail to surface.`;
+  } else {
+    para3 = `Your assessment is complete, ${userName}. The portrait above is built from 200 honest answers. Take what resonates. Notice what surprises you. And read your top career match not as a final answer but as a direction worth investigating.`;
+  }
+
+  return `<p>${para1}</p><p>${para2}</p><p>${para3}</p>`;
+}
+
+function generateInsights(ds) {
+  const insights = [];
+
+  const highest = Object.entries(ds).filter(([k])=>['PM','ENV','SKL','INT','WS','VAL','PER','MOI','FLW'].includes(k)).sort((a,b)=>b[1]-a[1]);
+  const top2 = highest.slice(0,2).map(x=>x[0]);
+  const low2 = highest.slice(-2).map(x=>x[0]);
+
+  const dimNames2 = {PM:"Purpose & Meaning",ENV:"Environment",SKL:"Skills",INT:"Interests",WS:"Work Style",VAL:"Values",PER:"Personality",MOI:"Mode of Impact",FLW:"Flow & Absorption"};
+
+  if(top2.includes('PM') && top2.includes('MOI')){
+    insights.push({quote:"You need the work to matter, and you need to feel it mattering.", body:"Your two highest dimensions — Purpose & Meaning and Mode of Impact — together describe someone who needs both the 'why' and the 'how' of their impact to feel right. It's not enough that the organization does good work. You need to be doing the specific part that connects to who you are."});
+  }
+  if(top2.includes('FLW')){
+    insights.push({quote:"The domain where you lose yourself is not a coincidence.", body:"Your high Flow scores suggest that there is a category of work or problem where you operate differently than in ordinary tasks — with less friction, greater capacity, and a quality of attention that doesn't feel like effort. Following that signal is one of the highest-return investments you can make in your career."});
+  }
+  if(ds.ENV >= 3.8 && (answers[34]||3) >= 4){
+    insights.push({quote:"You need to build, not maintain.", body:"Your responses consistently favored building from scratch over maintaining the established, and autonomy over structure. This points toward entrepreneurial contexts, founding roles, or positions with genuine creative and strategic latitude — not most mid-level corporate roles."});
+  }
+  if(ds.PER >= 3.8 && (answers[146]||3) >= 4){
+    insights.push({quote:"Your sense of justice is not background noise — it's a signal.", body:"You scored high on moral indignation — the capacity to be genuinely outraged by unfairness, not just intellectually opposed to it. This is often a reliable pointer toward advocacy, law, social work, or organizational leadership where your convictions have somewhere to go."});
+  }
+  if(ds.SKL >= 4.0){
+    insights.push({quote:"You have real capabilities. The question is whether your work is actually using them.", body:"Across your Skills dimension, you rated yourself highly on multiple competencies. High skill scores with lower satisfaction in current work often mean the skills are present but the application is wrong. Your top career match will likely feel like a better deployment of what you already have."});
+  }
+
+  if(insights.length === 0){
+    insights.push({quote:"Your results are a compass, not a contract.", body:"Take your top career match seriously as a direction. Share it with someone who knows you well and ask if it resonates with them. The outside perspective often confirms what the inside already knew."});
+  }
+
+  return insights;
+}
+
+// ═══════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════
+function computeAndShowResults(){
+  const ds = getDimScores();
+  const ranked = CAREERS.map(c=>({...c,score:scoreCareer(c,ds)})).sort((a,b)=>b.score-a.score);
+  const top = ranked[0];
+  const rest = ranked.slice(1,5);
+
+  document.getElementById('res-eyebrow').textContent = userName+', your results are ready.';
+  document.getElementById('res-title').innerHTML = 'This is what<br>you were <em>made for.</em>';
+  document.getElementById('res-sub').textContent = 'Below is a portrait of who you are, a picture of your seven dimensions, and the work that fits your specific wiring — based on 200 honest answers.';
+  document.getElementById('top-name').textContent = top.name;
+  document.getElementById('top-pct').textContent = top.score.toFixed(0)+'% match';
+  document.getElementById('top-bar').style.width='0%';
+  document.getElementById('top-desc').textContent = top.summary;
+  document.getElementById('top-why').textContent = 'Why this fits: '+top.why;
+
+  // Portrait
+  document.getElementById('portrait-body').innerHTML = generatePortrait(ds, top);
+
+  // Dims
+  const dr = document.getElementById('dim-rows');
+  dr.innerHTML='';
+  DIM_ORDER.forEach(d=>{
+    const pct=Math.round(((ds[d]-1)/4)*100);
+    dr.innerHTML+=`<div class="dim-row"><span class="dim-name">${DIM_NAMES[d]}</span><div class="dim-track"><div class="dim-fill" style="width:0%" data-pct="${pct}"></div></div><span class="dim-score">${ds[d].toFixed(1)}</span></div>`;
+  });
+
+  // Insights
+  const insights = generateInsights(ds);
+  const ib = document.getElementById('insight-block');
+  ib.innerHTML = '<div class="card-title" style="margin-bottom:8px;">What your answers reveal</div><p class="card-sub" style="margin-bottom:24px;">Patterns across your 200 responses that are worth paying attention to.</p>';
+  insights.forEach(ins=>{
+    ib.innerHTML += `<div class="insight-quote">${ins.quote}</div><p style="font-size:14px;color:var(--brown);line-height:1.85;margin-bottom:20px;">${ins.body}</p>`;
+  });
+
+  // Locked
+  const ll=document.getElementById('locked-list');
+  ll.innerHTML='';
+  rest.forEach((c,i)=>{
+    ll.innerHTML+=`<div class="locked-item"><div class="locked-item-left"><span class="locked-rank">${i+2}</span><span class="locked-name">${c.name}</span></div><span class="locked-pct">${c.score.toFixed(0)}%</span></div>`;
+  });
+
+  navigate('results');
+
+  setTimeout(()=>{
+    const bar=document.getElementById('top-bar');
+    bar.style.transition='width 1.6s cubic-bezier(0.4,0,0.2,1)';
+    bar.style.width=top.score.toFixed(0)+'%';
+    document.querySelectorAll('.dim-fill').forEach(el=>{
+      el.style.transition='width 1s ease';
+      el.style.width=el.dataset.pct+'%';
+    });
+  },200);
+}
+
+function handleUnlock(){alert('Stripe integration coming soon!\n\nThis unlocks your remaining 4 career matches, full descriptions, and detailed next steps for each one.\n\nOne-time payment: $9.');}
+function restart(){qIndex=0;answers={};userName='';userEmail='';document.getElementById('inp-name').value='';document.getElementById('inp-email').value='';navigate('landing');}
+
+// ═══════════════════════════════════
+// JOBS EXPLORER
+// ═══════════════════════════════════
+function renderJobs(){
+  const nav = document.getElementById('cluster-nav');
+  const sections = document.getElementById('cluster-sections');
+  nav.innerHTML = '<span class="cluster-pill active" onclick="filterCluster(this,\'all\')">All clusters</span>';
+  CLUSTERS.forEach(c=>{
+    nav.innerHTML+=`<span class="cluster-pill" onclick="filterCluster(this,'${c.id}')">${c.id}</span>`;
+  });
+
+  sections.innerHTML='';
+  CLUSTERS.forEach(c=>{
+    const clusterCareers = CAREERS.filter(j=>j.cluster===c.id);
+    if(!clusterCareers.length)return;
+    sections.innerHTML+=`
+      <div class="cluster-section" data-cluster="${c.id}">
+        <div class="cluster-title">${c.id}</div>
+        <p class="cluster-desc">${c.desc}</p>
+        <div class="jobs-grid">
+          ${clusterCareers.map(j=>`
+            <div class="job-card">
+              <div class="job-card-name">${j.name}</div>
+              <div class="job-card-desc">${j.summary}</div>
+              <div class="job-card-meta">
+                <span class="job-pill pill-salary">${j.salary}</span>
+                <span class="job-pill pill-growth">${j.growth} growth</span>
+                <span class="job-pill pill-type">${j.type}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  });
+}
+
+function filterCluster(el, id){
+  document.querySelectorAll('.cluster-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.cluster-section').forEach(s=>{
+    s.style.display=(id==='all'||s.dataset.cluster===id)?'':'none';
+  });
+}
+
+// ═══════════════════════════════════
+// FAQ
+// ═══════════════════════════════════
+function toggleFaq(el){el.classList.toggle('open');}
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  navigate('landing');
+});
+</script>
+</body>
+</html>
